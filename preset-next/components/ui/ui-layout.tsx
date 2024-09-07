@@ -20,7 +20,7 @@ export const UiLayout: React.FC<PropsWithChildren> = ({ children }) => {
       <ClusterChecker>
         <AccountChecker />
       </ClusterChecker>
-      <div className="flex-grow mx-4 lg:mx-auto">
+      <div className="flex-grow w-full">
         <Suspense
           fallback={
             <div className="text-center my-32">

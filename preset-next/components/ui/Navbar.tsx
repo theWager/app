@@ -1,14 +1,13 @@
-import React from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Search, Bell } from 'lucide-react';
+import React from 'react';
+import Discord from '../../assets/discord.svg';
+import Logo from '../../assets/logo.svg';
+import Telegram from '../../assets/telegram.svg';
 import { NAVBAR_LINKS } from '../../util/Constants';
 import { ClusterUiSelect } from '../cluster/cluster-ui';
 import { WalletButton } from '../solana/solana-provider';
-import Logo from '../../assets/logo.svg';
-import Discord from '../../assets/discord.svg';
-import Telegram from '../../assets/telegram.svg';
-import Image from 'next/image';
 import IconButton from './Button';
 
 const Navbar: React.FC = () => {

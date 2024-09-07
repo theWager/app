@@ -6,7 +6,7 @@ module.exports = {
   content: [
     join(
       __dirname,
-      '{src,pages,components,app}/**/*!(*.stories|*.spec).{ts,tsx,html}'
+      '{src,pages,components,app,sections}/**/*!(*.stories|*.spec).{ts,tsx,html}'
     ),
     ...createGlobPatternsForDependencies(__dirname),
   ],
@@ -14,10 +14,10 @@ module.exports = {
     extend: {
       colors: {
         darknavy: '#05081D',
-        green: '#41F7B5',
-        blue: '#323A76',
-        yellow: '#FFCA40',
-        lilac: '#8D3DF2',       
+        wagerGreen: '#41F7B5',
+        wagerBlue: '#323A76',
+        wagerYellow: '#FFCA40',
+        wagerLilac: '#8D3DF2',       
       },
     },
   },
