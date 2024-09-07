@@ -8,12 +8,36 @@ body {
 }
 
 .wallet-adapter-button-trigger {
-  background: rgb(100, 26, 230) !important;
-  border-radius: 8px !important;
-  padding-left: 16px !important;
-  padding-right: 16px !important;
+  display: inline-flex !important;
+  height: 36px !important;
+  padding: 12px !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 4px !important;
+  flex-shrink: 0 !important;
+  border-radius: 10px !important;
+  background: #8D3DF2 !important;
+  text-wrap: nowrap !important;
 }
 .wallet-adapter-dropdown-list,
 .wallet-adapter-button {
   font-family: inherit !important;
+}
+
+
+.wallet-adapter-dropdown button{
+  color: transparent; 
+  user-select: none;
+  border-radius: 50% !important;
+  font-size: 0;
+  padding:  0 !important;
+  width: 36px !important;
+  display: flex !important;
+  justify-content: center !important;
+}
+
+.wallet-adapter-dropdown button i{
+  margin-right: 0 !important;
+  height: 36px !important;
+  width: 36px !important;
 }
