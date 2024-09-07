@@ -3,6 +3,7 @@
 import BetGridCarousel from '@/sections/FeaturedBets';
 import { AppHero } from '../ui/ui-layout';
 import { MOCK_BINARY_BETS } from '@/util/Mocks';
+import AllBetsHeader from '@/sections/AllBets';
 
 const links: { label: string; href: string }[] = [
   { label: 'Solana Docs', href: 'https://docs.solana.com/' },
@@ -17,8 +18,9 @@ const links: { label: string; href: string }[] = [
 
 export default function DashboardFeature() {
   return (
-    <div>
+    <div className=" p-4 flex flex-col gap-y-4 bg-darknavy">
       <BetGridCarousel bets={MOCK_BINARY_BETS} />
+      <AllBetsHeader isLoggedIn />
       <AppHero title="gm" subtitle="Say hi to your new Solana dApp." />
       <div className="max-w-xl mx-auto py-6 sm:px-6 lg:px-8 text-center">
         <div className="space-y-2">

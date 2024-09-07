@@ -37,7 +37,7 @@ const BetGridCarousel: React.FC<BetGridCarouselProps> = ({ bets }) => {
     <div className="relative w-full">
       <div
         ref={scrollRef}
-        className="flex overflow-x-auto space-x-4 p-4 scrollbar-hide snap-x snap-mandatory"
+        className="flex overflow-x-auto space-x-4 scrollbar-hide snap-x snap-mandatory"
         style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
         onScroll={checkScrollPosition}
       >
