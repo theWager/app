@@ -1,4 +1,5 @@
-import { BinaryBet, Bet, BetState } from './Types';
+import { BinaryBet, Bet } from './Types'
+import { BetState } from './Enums'
 
 export const MOCK_BINARY_BETS: BinaryBet[] = [
   {
@@ -71,7 +72,7 @@ export const MOCK_BINARY_BETS: BinaryBet[] = [
     votesFor: 14,
     votesAgainst: 6,
   },
-];
+]
 
 export const MOCK_BETS: Bet[] = [
   {
@@ -80,6 +81,7 @@ export const MOCK_BETS: Bet[] = [
     title: 'Will it snow tomorrow?',
     description: 'Place your bet on whether it will snow tomorrow.',
     createdBy: 'JohnDoe',
+    competitor: 'AvaAnderson',
     judge: 'JaneSmith',
     ods1: 2.5,
     ods2: 1.8,
@@ -93,6 +95,7 @@ export const MOCK_BETS: Bet[] = [
     title: 'Who will win the NBA finals?',
     description: 'Place your bet on which team will win the NBA finals.',
     createdBy: 'AliceJohnson',
+    competitor: 'AvaAnderson',
     judge: 'BobSmith',
     ods1: 1.9,
     ods2: 2.2,
@@ -107,6 +110,7 @@ export const MOCK_BETS: Bet[] = [
     description:
       'Place your bet on whether the stock market will go up next week.',
     createdBy: 'EmilyBrown',
+    competitor: 'AvaAnderson',
     judge: 'DavidWilson',
     ods1: 1.5,
     ods2: 2.8,
@@ -121,6 +125,7 @@ export const MOCK_BETS: Bet[] = [
     description:
       'Place your bet on whether the new movie will be a box office hit.',
     createdBy: 'MichaelDavis',
+    competitor: 'AvaAnderson',
     judge: 'SarahMiller',
     ods1: 3.0,
     ods2: 1.2,
@@ -135,6 +140,7 @@ export const MOCK_BETS: Bet[] = [
     description:
       'Place your bet on whether the cryptocurrency market will crash.',
     createdBy: 'RobertTaylor',
+    competitor: 'AvaAnderson',
     judge: 'JenniferAnderson',
     ods1: 2.0,
     ods2: 1.5,
@@ -149,6 +155,7 @@ export const MOCK_BETS: Bet[] = [
     description:
       'Place your bet on whether the next iPhone will have a foldable display.',
     createdBy: 'DanielClark',
+    competitor: 'AvaAnderson',
     judge: 'LauraWhite',
     ods1: 1.7,
     ods2: 2.3,
@@ -163,6 +170,7 @@ export const MOCK_BETS: Bet[] = [
     description:
       'Place your bet on whether the next World Cup will be held in Europe.',
     createdBy: 'MatthewLee',
+    competitor: 'AvaAnderson',
     judge: 'EmmaTaylor',
     ods1: 1.3,
     ods2: 3.5,
@@ -177,6 +185,7 @@ export const MOCK_BETS: Bet[] = [
     description:
       'Place your bet on whether the next US president will be a woman.',
     createdBy: 'JamesBrown',
+    competitor: 'AvaAnderson',
     judge: 'OliviaJohnson',
     ods1: 2.8,
     ods2: 1.5,
@@ -191,6 +200,7 @@ export const MOCK_BETS: Bet[] = [
     description:
       'Place your bet on whether the next Olympic Games will be held in Asia.',
     createdBy: 'SophiaWilson',
+    competitor: 'AvaAnderson',
     judge: 'NoahDavis',
     ods1: 1.5,
     ods2: 2.8,
@@ -205,6 +215,7 @@ export const MOCK_BETS: Bet[] = [
     description:
       'Place your bet on whether the next Marvel movie will break box office records.',
     createdBy: 'AvaAnderson',
+    competitor: 'AvaAnderson',
     judge: 'WilliamSmith',
     ods1: 1.2,
     ods2: 3.0,
@@ -212,4 +223,4 @@ export const MOCK_BETS: Bet[] = [
     createdDate: new Date('2022-10-01'),
     expirationDate: new Date('2022-10-02'),
   },
-];
+]

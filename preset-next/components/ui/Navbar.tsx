@@ -1,3 +1,5 @@
+'use client'
+
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -10,11 +12,19 @@ import { ClusterUiSelect } from '../cluster/cluster-ui'
 import { WalletButton } from '../solana/solana-provider'
 import IconButton from './Button'
 
-const Navbar: React.FC = () => {
+type NavbarProps = {
+  isHome?: boolean
+}
+
+const Navbar: React.FC<NavbarProps> = ({ isHome = false }) => {
   const pathname = usePathname()
 
   return (
-    <nav className='flex items-center justify-between bg-transparent py-4 px-16'>
+    <nav
+      className={`z-10 flex items-center justify-between bg-transparent px-16 ${
+        isHome ? 'py-6' : 'py-3'
+      }`}
+    >
       <div className='flex items-center space-x-4'>
         <Link
           href='/'
@@ -36,25 +46,27 @@ const Navbar: React.FC = () => {
         />
       </div>
 
-      <div className='flex items-center space-x-4'>
-        {NAVBAR_LINKS.map(({ label, path }) => (
-          <Link
-            key={path}
-            href={path}
-            className={`text-white hover:text-teal-400 hidden md:inline ${
-              pathname.startsWith(path) ? 'text-teal-400' : ''
-            }`}
-          >
-            {label}
-          </Link>
-        ))}
-        {/* <Bell
+      {!isHome && (
+        <div className='flex items-center space-x-4'>
+          {NAVBAR_LINKS.map(({ label, path }) => (
+            <Link
+              key={path}
+              href={path}
+              className={`text-white hover:text-teal-400 hidden md:inline ${
+                pathname.startsWith(path) ? 'text-teal-400' : ''
+              }`}
+            >
+              {label}
+            </Link>
+          ))}
+          {/* <Bell
           className="text-white hover:text-teal-400 cursor-pointer"
           size={20}
         /> */}
-        <WalletButton />
-        <ClusterUiSelect />
-      </div>
+          <WalletButton />
+          <ClusterUiSelect />
+        </div>
+      )}
     </nav>
   )
 }

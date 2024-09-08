@@ -1,33 +1,33 @@
-'use client';
+'use client'
 
-import { PublicKey } from '@solana/web3.js';
-import { useMemo } from 'react';
+import { PublicKey } from '@solana/web3.js'
+import { useMemo } from 'react'
 
-import { useParams } from 'next/navigation';
+import { useParams } from 'next/navigation'
 
-import { ExplorerLink } from '../cluster/cluster-ui';
-import { AppHero, ellipsify } from '../ui/ui-layout';
+import { ExplorerLink } from '../cluster/cluster-ui'
+import { AppHero, ellipsify } from '../ui/Misc'
 import {
   AccountBalance,
   AccountButtons,
   AccountTokens,
   AccountTransactions,
-} from './account-ui';
+} from './account-ui'
 
 export default function AccountDetailFeature() {
-  const params = useParams();
+  const params = useParams()
   const address = useMemo(() => {
     if (!params.address) {
-      return;
+      return
     }
     try {
-      return new PublicKey(params.address);
+      return new PublicKey(params.address)
     } catch (e) {
-      console.log(`Invalid public key`, e);
+      console.log(`Invalid public key`, e)
     }
-  }, [params]);
+  }, [params])
   if (!address) {
-    return <div>Error loading account</div>;
+    return <div>Error loading account</div>
   }
 
   return (
@@ -35,7 +35,7 @@ export default function AccountDetailFeature() {
       <AppHero
         title={<AccountBalance address={address} />}
         subtitle={
-          <div className="my-4">
+          <div className='my-4'>
             <ExplorerLink
               path={`account/${address}`}
               label={ellipsify(address.toString())}
@@ -43,14 +43,14 @@ export default function AccountDetailFeature() {
           </div>
         }
       >
-        <div className="my-4">
+        <div className='my-4'>
           <AccountButtons address={address} />
         </div>
       </AppHero>
-      <div className="space-y-8">
+      <div className='space-y-8'>
         <AccountTokens address={address} />
         <AccountTransactions address={address} />
       </div>
     </div>
-  );
+  )
 }
