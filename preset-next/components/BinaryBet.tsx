@@ -1,5 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
+import { BinaryBet } from '@/util/Types';
 
 const BetCard: React.FC<BinaryBet> = ({
   id,
