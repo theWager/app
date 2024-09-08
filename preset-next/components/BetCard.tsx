@@ -10,6 +10,7 @@ import PickWinner from './PickWinner'
 
 type BetCardProps = Bet & {
   betsPage: BetPages
+  onClick?: () => void  // New prop for click handler
 }
 
 const BetCard: React.FC<BetCardProps> = props => {
