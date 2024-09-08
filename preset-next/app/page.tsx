@@ -27,7 +27,7 @@ const Index = () => {
         </h1>
         <div className='flex gap-6 mt-12'>
           <IconButton
-            href='/dashboard'
+            href='/all-bets'
             classes='bg-wagerLilac/50 text-white text-base font-bold inline-flex py-2 md:ml-6'
             title='Get started'
           />
