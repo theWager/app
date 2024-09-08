@@ -16,7 +16,7 @@ const BetCard: React.FC<BinaryBet> = ({
       key={id}
     >
       {image && (
-        <div className="w-full h-16 relative rounded-2xl overflow-hidden">
+        <div className="w-full h-16 relative rounded-md overflow-hidden">
           <Image src={image} alt={title} layout="fill" objectFit="cover" />
         </div>
       )}
