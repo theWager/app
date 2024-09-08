@@ -2,9 +2,22 @@ import { Bet } from '@/util/Types'
 import React from 'react'
 import StatusCrumb from './ui/Status'
 import Judge from '@/assets/judge.svg'
+import Creator from '@/assets/creator.svg'
 import Image from 'next/image'
+import { BetPages } from '@/util/Enums'
 
-const BetCard: React.FC<Bet> = ({ title, state, createdBy, amount }) => {
+type BetCardProps = Bet & {
+  betsPage: BetPages
+}
+
+const BetCard: React.FC<BetCardProps> = ({
+  title,
+  state,
+  createdBy,
+  amount,
+  betsPage,
+  competitor,
+}) => {
   return (
     <div className='bg-wagerBlue/20 rounded-xl p-6 min-w-[250px] max-w-[500px]'>
       <div className='flex justify-between items-center mb'>
@@ -15,8 +28,18 @@ const BetCard: React.FC<Bet> = ({ title, state, createdBy, amount }) => {
       <div className='space-y-1'>
         <div className='flex items-center mt-1'>
           <span className='text-gray-400 mr-2 font-light'>{createdBy}</span>
-          <Image src={Judge} alt='gavel' className='w-4 h-4' />
+          {betsPage === BetPages.JUDGING && (
+            <Image src={Creator} alt='gavel' className='w-4 h-4' />
+          )}
+          {betsPage !== BetPages.JUDGING && (
+            <Image src={Judge} alt='gavel' className='w-4 h-4' />
+          )}
         </div>
+        {betsPage === BetPages.JUDGING && (
+          <div className='flex items-center mt-1'>
+            <span className='text-gray-400 mr-2 font-light'>{competitor}</span>
+          </div>
+        )}
       </div>
     </div>
   )

@@ -1,4 +1,4 @@
-import { BetState } from '@/util/Types'
+import { BetState } from '@/util/Enums'
 
 type StatusCrumbProps = {
   state: BetState
