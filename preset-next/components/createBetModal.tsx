@@ -1,5 +1,6 @@
 import React, { useState, useEffect} from 'react';
 import { X, ChevronDown, CheckCircle, XCircle } from 'lucide-react';
+import { useWallet } from "@solana/wallet-adapter-react";
 import PocketBase from 'pocketbase';
 
 // Initialize PocketBase
@@ -11,8 +12,9 @@ interface CreateBetModalProps {
 }
 
 const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
+  const wallet = useWallet()
+
   const [formData, setFormData] = useState({
-    address_creator: 'aa',
     address_opponent: '',
     address_judge: '',
     category: '',
@@ -39,7 +41,7 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
       [name]: value,
     }));
   };
-
+ 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -47,14 +49,11 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
       const betHash = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
       
 const betData = {
-  ...formData, // Spread formData (which are strings initially)
-  bet_hash: betHash, // Add bet_hash to the object
-  odd_created: parseFloat(formData.odd_created) || 0, // Convert odd_created to a float
-  odd_opponent: parseFloat(formData.odd_opponent) || 0, // Convert odd_opponent to a float
-  amount: parseFloat(formData.amount) || 0, // Convert amount to a float
-  judge_fee: parseFloat(formData.judge_fee) || 0, // Convert judge_fee to a float
-  accepted_opponent: true, // Set additional field values
-  accepted_judge: true, // Set additional field values
+  ...formData,
+  bet_hash: betHash,
+  accepted_opponent: false,
+  accepted_judge: false, 
+  address_creator: wallet.publicKey?.toBase58(),
 };
 
       // Send data to PocketBase
@@ -90,7 +89,7 @@ const betData = {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-gray-900 text-white p-6 rounded-lg max-w-md w-full">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-teal-400">Create a bet</h2>
@@ -138,7 +137,7 @@ const betData = {
               >
                 <option value="">Pick a Category</option>
                 <option value="Sports">Sports</option>
-                <option value="politics">Politics</option>
+                <option value="Politics">Politics</option>
                 <option value="entertainment">Entertainment</option>
                 {/* Add more categories as needed */}
               </select>
