@@ -8,6 +8,7 @@ import { BetPages } from '@/util/Enums'
 
 type BetCardProps = Bet & {
   betsPage: BetPages
+  onClick?: () => void  // New prop for click handler
 }
 
 const BetCard: React.FC<BetCardProps> = ({
@@ -17,9 +18,13 @@ const BetCard: React.FC<BetCardProps> = ({
   amount,
   betsPage,
   competitor,
+  onClick,  // New prop
 }) => {
   return (
-    <div className='bg-wagerBlue/20 rounded-xl p-6 min-w-[250px] max-w-[500px]'>
+    <div 
+      className='bg-wagerBlue/20 rounded-xl p-6 min-w-[250px] max-w-[500px] cursor-pointer hover:bg-wagerBlue/30 transition-colors duration-200'
+      onClick={onClick}  // Add onClick handler here
+    >
       <div className='flex justify-between items-center mb'>
         <span className='text-teal-400 font-bold'>{amount} SOL</span>
         <StatusCrumb state={state} classes='-translate-y-1' />
