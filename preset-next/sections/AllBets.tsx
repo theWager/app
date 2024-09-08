@@ -82,7 +82,7 @@ const AllBetsHeader: React.FC<AllBetsHeaderProps> = ({
 
       <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mt-6'>
         {bets.map(bet => (
-          <BetCard key={bet.id} {...bet} betsPage={BetPages.ALL} onClick={() => handleBetClick(bet)} />
+          <BetCard {...bet} betsPage={page} />
         ))}
       </div>
 
