@@ -1,11 +1,13 @@
-import React from 'react';
-import IconButton from '@/components/ui/Button';
-import { Search, ArrowUpDown } from 'lucide-react';
-import BetCard from '@/components/BetCard';
-import { MOCK_BETS } from '@/util/Mocks';
-
+import React from 'react'
+import IconButton from '@/components/ui/Button'
+import Plus from '@/assets/plus.svg'
+import Search from '@/assets/search.svg'
+import Sort from '@/assets/sort.svg'
+import BetCard from '@/components/BetCard'
+import { MOCK_BETS } from '@/util/Mocks'
+import Image from 'next/image'
 interface AllBetsHeaderProps {
-  isLoggedIn: boolean;
+  isLoggedIn: boolean
 }
 
 const AllBetsHeader: React.FC<AllBetsHeaderProps> = ({ isLoggedIn }) => {
@@ -13,45 +15,48 @@ const AllBetsHeader: React.FC<AllBetsHeaderProps> = ({ isLoggedIn }) => {
     <div
       className={`bg-navy-900 rounded-2xl shadow-lg border border-wagerBlue p-6`}
     >
-      <div className="flex items-center justify-between py-3 border-b border-wagerBlue">
-        <div className="flex items-center space-x-2 sm:space-x-4">
-          <h1 className="text-xl sm:text-3xl font-bold text-teal-400">
+      <div className='flex items-center justify-between pb-6 pt-1 border-b border-wagerBlue'>
+        <div className='flex items-center'>
+          <h1 className='text-xl sm:text-3xl font-bold text-teal-400'>
             All Bets
           </h1>
           <IconButton
-            href="#"
-            classes="bg-purple-600/10 hover:bg-purple-600/20 text-purple-300 text-sm sm:text-lg inline-flex "
+            icon={Plus}
+            href='#'
+            classes='bg-wagerLilac/50 text-white text-base font-bold inline-flex py-2 ml-5 md:ml-6'
             disabled={!isLoggedIn}
-            title="Create a Bet +"
+            title='Create a Bet'
           />
         </div>
-        <div className="flex items-center space-x-2 sm:space-x-4">
-          <div className="relative hidden md:block">
+        <div className='flex items-center space-x-2 sm:space-x-4'>
+          <div className='relative hidden md:block'>
             <input
-              type="text"
-              placeholder="Search"
-              className="pl-10 pr-4 py-1 w-40 sm:w-auto rounded-md bg-gray-800 text-white text-sm border border-gray-700 focus:outline-none focus:border-purple-500"
+              type='text'
+              placeholder='Search'
+              className='pl-10 pr-3 py-2 w-40 sm:w-auto rounded-lg bg-wagerBlue/20 text-white text-base font-light focus:outline-none focus:border-purple-500'
             />
-            <Search
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-              size={16}
+            <Image
+              src={Search}
+              alt='search'
+              className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400'
             />
           </div>
           <IconButton
-            classes="text-white p-2 inline-flex "
-            href="#"
-            title="Sort"
+            icon={Sort}
+            classes='inline-flex px-3 py-2 rounded-lg bg-wagerBlue/20 text-base font-light text-gray-400 '
+            href='#'
+            title='Sort'
           />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-4">
-        {MOCK_BETS.map((bet) => (
+      <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mt-6'>
+        {MOCK_BETS.map(bet => (
           <BetCard {...bet} />
         ))}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default AllBetsHeader;
+export default AllBetsHeader
