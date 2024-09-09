@@ -1,6 +1,3 @@
-import { ClusterProvider } from '@/components/cluster/cluster-data-access'
-import { ReactQueryProvider } from '@/components/react-query-provider'
-import { SolanaProvider } from '@/components/solana/solana-provider'
 import { Inter } from 'next/font/google'
 import './global.css'
 

@@ -3,7 +3,12 @@ import IconButton from '@/components/ui/Button'
 import { HomeLayout } from '@/layouts/HomeLayout'
 import { Cherry_Bomb_One } from 'next/font/google'
 import Image from 'next/image'
-const cherry = Cherry_Bomb_One({ weight: '400', subsets: ['latin'] })
+const cherry = Cherry_Bomb_One({
+  weight: ['400'],
+  subsets: ['latin'],
+  display: 'swap',
+  adjustFontFallback: false,
+})
 
 const Index = () => {
   return (
