@@ -19,6 +19,10 @@ export const BetsMapper = (
     createdBy: userMap[bet.address_creator] || 'Unknown', // Lookup the username, fallback to 'Unknown' if not found
     judge: userMap[bet.address_judge] || 'No Judge',
     competitor: userMap[bet.address_opponent] || 'Opponent pending',
+    competitorAddress: bet.address_opponent,
+    acceptedCompetitor: bet.accepted_opponent,
+    judgeAddress: bet.address_judge,
+    acceptedJudge: bet.accepted_judge,
     ods1: bet.odd_created,
     ods2: bet.odd_opponent,
     amount: bet.amount,

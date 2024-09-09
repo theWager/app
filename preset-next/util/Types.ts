@@ -16,6 +16,10 @@ export type Bet = {
   description: string
   createdBy: string
   competitor: string
+  competitorAddress: string
+  acceptedCompetitor: boolean
+  judgeAddress: string
+  acceptedJudge: boolean
   judge: string
   ods1: number
   ods2: number

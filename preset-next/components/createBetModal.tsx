@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, ChevronDown, CheckCircle, XCircle } from 'lucide-react';
 import { useWallet } from "@solana/wallet-adapter-react";
 import PocketBase from 'pocketbase';
@@ -12,7 +12,7 @@ interface CreateBetModalProps {
 }
 
 const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
-  const wallet = useWallet()
+  const wallet = useWallet();
 
   const [formData, setFormData] = useState({
     address_opponent: '',
@@ -28,11 +28,29 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
     judge_fee: '',
   });
 
+  const [username, setUsername] = useState('');
+  const [showUsernameField, setShowUsernameField] = useState(false);
+
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: '',
     type: 'success' as 'success' | 'error',
   });
+
+  useEffect(() => {
+    const checkUser = async () => {
+      if (wallet.publicKey) {
+        try {
+          const result = await pb.collection('users').getFirstListItem(`address="${wallet.publicKey.toBase58()}"`);
+          setShowUsernameField(false);
+        } catch (error) {
+          setShowUsernameField(true);
+        }
+      }
+    };
+
+    checkUser();
+  }, [wallet.publicKey]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -41,31 +59,41 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
       [name]: value,
     }));
   };
- 
+
+  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUsername(e.target.value);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Generate a simple hash for the bet
-      const betHash = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-      
-const betData = {
-  ...formData,
-  bet_hash: betHash,
-  accepted_opponent: false,
-  accepted_judge: false, 
-  address_creator: wallet.publicKey?.toBase58(),
-};
 
-      // Send data to PocketBase
+      if (showUsernameField && username) {
+        await pb.collection('users').create({
+          name: username,
+          address: wallet.publicKey?.toBase58(),
+        });
+      }
+
+      const betHash = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
+      const betData = {
+        ...formData,
+        bet_hash: betHash,
+        accepted_opponent: false,
+        accepted_judge: false,
+        address_creator: wallet.publicKey?.toBase58(),
+      };
+
+  
       await pb.collection('bets').create(betData);
-      
+
       setSnackbar({
         open: true,
         message: 'Bet created successfully!',
         type: 'success',
       });
-      setTimeout(()=> {onClose();}, 2000)
-       // Close the modal after successful creation
+      setTimeout(() => { onClose(); }, 2000);
     } catch (error) {
       console.error('Error creating bet:', error);
       setSnackbar({
@@ -97,8 +125,23 @@ const betData = {
             <X size={24} />
           </button>
         </div>
-        
+
         <form className="space-y-4" onSubmit={handleSubmit}>
+          {showUsernameField && (
+            <div>
+              <label htmlFor="username" className="block text-sm font-medium text-teal-400 mb-1">Username</label>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                value={username}
+                onChange={handleUsernameChange}
+                placeholder="Enter your username"
+                className="w-full bg-gray-800 rounded px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                required
+              />
+            </div>
+          )}
           <div>
             <label htmlFor="title" className="block text-sm font-medium text-teal-400 mb-1">Bet Title</label>
             <input
@@ -243,9 +286,8 @@ const betData = {
         </form>
       </div>
       {snackbar.open && (
-        <div className={`fixed bottom-4 right-4 px-4 py-2 rounded-md shadow-lg flex items-center space-x-2 ${
-          snackbar.type === 'success' ? 'bg-green-500' : 'bg-red-500'
-        }`}>
+        <div className={`fixed bottom-4 right-4 px-4 py-2 rounded-md shadow-lg flex items-center space-x-2 ${snackbar.type === 'success' ? 'bg-green-500' : 'bg-red-500'
+          }`}>
           {snackbar.type === 'success' ? (
             <CheckCircle className="text-white" size={20} />
           ) : (
