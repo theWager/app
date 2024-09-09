@@ -88,6 +88,10 @@ export const MOCK_BETS: Bet[] = [
     amount: 100,
     createdDate: new Date('2022-01-01'),
     expirationDate: new Date('2022-01-02'),
+    competitorAddress: 'a',
+    acceptedCompetitor: true,
+    acceptedJudge: true,
+    judgeAddress: "b"
   },
   {
     state: BetState.PENDING,
@@ -101,7 +105,10 @@ export const MOCK_BETS: Bet[] = [
     ods2: 2.2,
     amount: 200,
     createdDate: new Date('2022-02-01'),
-    expirationDate: new Date('2022-06-01'),
+    expirationDate: new Date('2022-06-01'), competitorAddress: 'a',
+    acceptedCompetitor: true,
+    acceptedJudge: true,
+    judgeAddress: "b"
   },
   {
     state: BetState.ACTIVE,
@@ -116,7 +123,10 @@ export const MOCK_BETS: Bet[] = [
     ods2: 2.8,
     amount: 500,
     createdDate: new Date('2022-03-01'),
-    expirationDate: new Date('2022-03-08'),
+    expirationDate: new Date('2022-03-08'), competitorAddress: 'a',
+    acceptedCompetitor: true,
+    acceptedJudge: true,
+    judgeAddress: "b"
   },
   {
     state: BetState.ACTIVE,
@@ -131,7 +141,10 @@ export const MOCK_BETS: Bet[] = [
     ods2: 1.2,
     amount: 50,
     createdDate: new Date('2022-04-01'),
-    expirationDate: new Date('2022-04-02'),
+    expirationDate: new Date('2022-04-02'), competitorAddress: 'a',
+    acceptedCompetitor: true,
+    acceptedJudge: true,
+    judgeAddress: "b"
   },
   {
     state: BetState.ACTIVE,
@@ -146,7 +159,10 @@ export const MOCK_BETS: Bet[] = [
     ods2: 1.5,
     amount: 1000,
     createdDate: new Date('2022-05-01'),
-    expirationDate: new Date('2022-05-08'),
+    expirationDate: new Date('2022-05-08'), competitorAddress: 'a',
+    acceptedCompetitor: true,
+    acceptedJudge: true,
+    judgeAddress: "b"
   },
   {
     state: BetState.ACTIVE,
@@ -161,7 +177,10 @@ export const MOCK_BETS: Bet[] = [
     ods2: 2.3,
     amount: 200,
     createdDate: new Date('2022-06-01'),
-    expirationDate: new Date('2022-06-02'),
+    expirationDate: new Date('2022-06-02'), competitorAddress: 'a',
+    acceptedCompetitor: true,
+    acceptedJudge: true,
+    judgeAddress: "b"
   },
   {
     state: BetState.ACTIVE,
@@ -176,7 +195,10 @@ export const MOCK_BETS: Bet[] = [
     ods2: 3.5,
     amount: 500,
     createdDate: new Date('2022-07-01'),
-    expirationDate: new Date('2022-07-08'),
+    expirationDate: new Date('2022-07-08'), competitorAddress: 'a',
+    acceptedCompetitor: true,
+    acceptedJudge: true,
+    judgeAddress: "b"
   },
   {
     state: BetState.ACTIVE,
@@ -191,7 +213,10 @@ export const MOCK_BETS: Bet[] = [
     ods2: 1.5,
     amount: 1000,
     createdDate: new Date('2022-08-01'),
-    expirationDate: new Date('2022-08-02'),
+    expirationDate: new Date('2022-08-02'), competitorAddress: 'a',
+    acceptedCompetitor: true,
+    acceptedJudge: true,
+    judgeAddress: "b"
   },
   {
     state: BetState.ACTIVE,
@@ -206,7 +231,10 @@ export const MOCK_BETS: Bet[] = [
     ods2: 2.8,
     amount: 200,
     createdDate: new Date('2022-09-01'),
-    expirationDate: new Date('2022-09-08'),
+    expirationDate: new Date('2022-09-08'), competitorAddress: 'a',
+    acceptedCompetitor: true,
+    acceptedJudge: true,
+    judgeAddress: "b"
   },
   {
     state: BetState.ACTIVE,
@@ -221,6 +249,9 @@ export const MOCK_BETS: Bet[] = [
     ods2: 3.0,
     amount: 100,
     createdDate: new Date('2022-10-01'),
-    expirationDate: new Date('2022-10-02'),
+    expirationDate: new Date('2022-10-02'), competitorAddress: 'a',
+    acceptedCompetitor: true,
+    acceptedJudge: true,
+    judgeAddress: "b"
   },
 ]
