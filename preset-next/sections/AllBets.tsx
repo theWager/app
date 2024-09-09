@@ -7,6 +7,7 @@ import BetCard from '@/components/BetCard'
 import Image from 'next/image'
 import CreateBetModal from '@/components/createBetModal'
 import BetDetailsModal from '@/components/BetDetailsModal'
+import { useWallet } from '@solana/wallet-adapter-react'
 import { BetPages } from '@/util/Enums'
 import { Bet } from '@/util/Types'
 
@@ -26,6 +27,8 @@ const AllBetsHeader: React.FC<AllBetsHeaderProps> = ({
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [selectedBet, setSelectedBet] = useState<Bet | null>(null);
+  const wallet = useWallet()
+  isLoggedIn = wallet.publicKey?.toBase58().length ? true : false
 
   const openCreateModal = () => setIsCreateModalOpen(true);
   const closeCreateModal = () => setIsCreateModalOpen(false);
@@ -47,13 +50,13 @@ const AllBetsHeader: React.FC<AllBetsHeaderProps> = ({
           <h1 className='text-xl sm:text-3xl font-bold text-teal-400'>
             {title}
           </h1>
-          {page === BetPages.ALL && (
+          {page === BetPages.ALL && isLoggedIn &&( 
             <button
               onClick={openCreateModal}
               className="bg-wagerLilac/50 text-white text-sm font-bold inline-flex py-2 ml-5 md:ml-6 px-3 justify-center items-center gap-1 flex-shrink-0 rounded-lg hover:opacity-60 transition-colors duration-200"
               disabled={!isLoggedIn}
-            >
-              <Image src={Plus} alt={`icon`} className='w-4.5 h-4.5' />
+            > 
+             <Image src={Plus} alt={`icon`} className='w-4.5 h-4.5' />
               Create a bet
             </button>
           )}
