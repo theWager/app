@@ -37,21 +37,37 @@ const BetDetails: React.FC<BetDetailsProps> = ({
 }) => {
   const wallet = useWallet();
   const [isAccepting, setIsAccepting] = useState(false);
+
   const [error, setError] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
   const isOpponent = wallet.publicKey?.toBase58() === competitorAddress;
+  const isJudge = wallet.publicKey?.toBase58() == judgeAddress
 
   const handleAccept = async () => {
     setIsAccepting(true);
     setError(null);
     try {
-      await pb.collection('bets').update(id, { acceptedCompetitor: true });
+      await pb.collection('bets').update(id, { accepted_opponent: true });
       onClose(); // Close the modal after successful update
     } catch (error) {
       console.error('Error accepting bet:', error);
       setError('Failed to accept bet. Please try again.');
+    } finally {
+      setIsAccepting(false);
+    }
+  };
+
+  const handleJudgeAccept = async () => {
+    setIsAccepting(true);
+    setError(null);
+    try {
+      await pb.collection('bets').update(id, { accepted_judge: true });
+      onClose(); // Close the modal after successful update
+    } catch (error) {
+      console.error('Error accepting judging:', error);
+      setError('Failed to accept judging. Please try again.');
     } finally {
       setIsAccepting(false);
     }
@@ -131,6 +147,25 @@ const BetDetails: React.FC<BetDetailsProps> = ({
               className='bg-green-600/30 hover:bg-green-700 text-green-300 rounded-lg w-full h-fit py-3 disabled:opacity-50'
             >
               {isAccepting ? 'Accepting...' : 'Accept Bet'}
+            </button>
+
+          </div>
+        )}
+
+        {isJudge && !isJudgment && !acceptedJudge && (
+          <div className='flex justify-between mt-6 space-x-5'>
+            <button
+              onClick={handleDecline}
+              className='bg-red-600/30 hover:bg-red-700 text-red-300 rounded-lg w-full h-fit py-3'
+            >
+              Decline Judging
+            </button>
+            <button
+              onClick={handleJudgeAccept}
+              disabled={isAccepting}
+              className='bg-green-600/30 hover:bg-green-700 text-green-300 rounded-lg w-full h-fit py-3 disabled:opacity-50'
+            >
+              {isAccepting ? 'Accepting...' : 'Accept Judging'}
             </button>
 
           </div>
