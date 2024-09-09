@@ -11,7 +11,11 @@ import { NAVBAR_LINKS } from '../../util/Constants'
 import { ClusterUiSelect } from '../cluster/cluster-ui'
 import { WalletButton } from '../solana/solana-provider'
 import IconButton from './Button'
+import PixelGrid from '../../public/pixel-grid.png'
+import Marquee from 'react-fast-marquee'
+import { VT323 } from 'next/font/google'
 
+const vt323 = VT323({ subsets: ['latin'], weight: ['400'] })
 type NavbarProps = {
   isHome?: boolean
 }
@@ -45,7 +49,23 @@ const Navbar: React.FC<NavbarProps> = ({ isHome = false }) => {
           classes='hidden md:inline-flex '
         />
       </div>
-
+      {!isHome && (
+        <div
+          className='flex-grow h-full relative rounded-lg overflow-hidden mx-6 lg:mx-12'
+          style={{ backgroundImage: `url(${PixelGrid.src})` }}
+        >
+          <Marquee
+            autoFill
+            speed={100}
+            className='top-1/2'
+            style={{ position: 'absolute', transform: 'translateY(-50%)' }}
+          >
+            <span className={'ml-6 text-wagerGreen ' + vt323.className}>
+              Trump wins US elections?
+            </span>
+          </Marquee>
+        </div>
+      )}
       {!isHome && (
         <div className='flex items-center space-x-4'>
           {NAVBAR_LINKS.map(({ label, path }) => (

@@ -1,3 +1,4 @@
+import React from 'react'
 import { BetState } from './Enums'
 
 export type BinaryBet = {
@@ -21,4 +22,12 @@ export type Bet = {
   amount: number
   createdDate: Date
   expirationDate: Date
+}
+
+export type BetCategory = {
+  icon: any
+  name: string
+  judge: string
+  classes: string
+  judgeIcon: any
 }
