@@ -42,7 +42,7 @@ const PickWinner: React.FC<BetDetailsProps> = props => {
             onClick={() => changeWinner(true)}
             className={
               (isCreatorWinner ? 'bg-wagerLilac/50 border-purple-600' : '') +
-              ' flex fle-row justify-start items-center border border-wagerBlue  hover:border-purple-600 p-3 rounded-2xl'
+              ' flex fle-row justify-start items-center border border-wagerBlue   transition-all duration-300 hover:border-purple-600 p-3 rounded-2xl'
             }
           >
             <span className='rounded-full bg-wagerLilac text-center text-white font-bold p-3 mr-6 w-12'>
@@ -54,7 +54,7 @@ const PickWinner: React.FC<BetDetailsProps> = props => {
             onClick={() => changeWinner(false)}
             className={
               (!isCreatorWinner ? 'bg-wagerLilac/50 border-purple-600' : '') +
-              ' flex fle-row justify-start items-center border border-wagerBlue hover:border-purple-600 p-3 rounded-2xl'
+              ' flex fle-row justify-start items-center border border-wagerBlue  transition-all duration-300 hover:border-purple-600 p-3 rounded-2xl'
             }
           >
             <span className='rounded-full bg-wagerLilac text-center text-white font-bold p-3 mr-6 w-12'>
@@ -65,10 +65,10 @@ const PickWinner: React.FC<BetDetailsProps> = props => {
         </div>
 
         <div className='flex justify-between mt-6 space-x-5'>
-          <button className='bg-wagerBlue/10 hover:bg-wagerBlue/20 text-gray rounded-lg w-full h-fit py-3'>
+          <button className='bg-wagerBlue/10  transition-all duration-300 hover:bg-wagerBlue/20 text-gray rounded-lg w-full h-fit py-3'>
             Cancel
           </button>
-          <button className='bg-wagerLilac hover:bg-wagerLilac/70 text-white rounded-lg w-full font-bold h-fit py-3'>
+          <button className='bg-wagerLilac  transition-all duration-300 hover:bg-wagerLilac/70 text-white rounded-lg w-full font-bold h-fit py-3'>
             Accept
           </button>
         </div>
