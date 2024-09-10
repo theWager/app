@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { Bet } from '@/util/Types';
-import StatusCrumb from './ui/Status';
-import { useWallet } from "@solana/wallet-adapter-react";
-import PocketBase from 'pocketbase';
+import React, { useState } from 'react'
+import { Bet } from '@/util/Types'
+import StatusCrumb from './ui/Status'
+import { useWallet } from '@solana/wallet-adapter-react'
+import PocketBase from 'pocketbase'
 
 // Initialize PocketBase
-const pb = new PocketBase('https://wager.pockethost.io');
+const pb = new PocketBase('https://wager.pockethost.io')
 type BetDetailsProps = Bet & {
   isJudgment: boolean
   isOpen: boolean
@@ -33,50 +33,49 @@ const BetDetails: React.FC<BetDetailsProps> = ({
   isOpen,
   onClose,
   isJudgment,
-  openWinnerModal
+  openWinnerModal,
 }) => {
-  const wallet = useWallet();
-  const [isAccepting, setIsAccepting] = useState(false);
+  const wallet = useWallet()
+  const [isAccepting, setIsAccepting] = useState(false)
 
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null)
 
-  if (!isOpen) return null;
+  if (!isOpen) return null
 
-  const isOpponent = wallet.publicKey?.toBase58() === competitorAddress;
+  const isOpponent = wallet.publicKey?.toBase58() === competitorAddress
   const isJudge = wallet.publicKey?.toBase58() == judgeAddress
 
   const handleAccept = async () => {
-    setIsAccepting(true);
-    setError(null);
+    setIsAccepting(true)
+    setError(null)
     try {
-      await pb.collection('bets').update(id, { accepted_opponent: true });
-      onClose(); // Close the modal after successful update
+      await pb.collection('bets').update(id, { accepted_opponent: true })
+      onClose() // Close the modal after successful update
     } catch (error) {
-      console.error('Error accepting bet:', error);
-      setError('Failed to accept bet. Please try again.');
+      console.error('Error accepting bet:', error)
+      setError('Failed to accept bet. Please try again.')
     } finally {
-      setIsAccepting(false);
+      setIsAccepting(false)
     }
-  };
+  }
 
   const handleJudgeAccept = async () => {
-    setIsAccepting(true);
-    setError(null);
+    setIsAccepting(true)
+    setError(null)
     try {
-      await pb.collection('bets').update(id, { accepted_judge: true });
-      onClose(); // Close the modal after successful update
+      await pb.collection('bets').update(id, { accepted_judge: true })
+      onClose() // Close the modal after successful update
     } catch (error) {
-      console.error('Error accepting judging:', error);
-      setError('Failed to accept judging. Please try again.');
+      console.error('Error accepting judging:', error)
+      setError('Failed to accept judging. Please try again.')
     } finally {
-      setIsAccepting(false);
+      setIsAccepting(false)
     }
-  };
+  }
 
   const handleDecline = () => {
-
-    onClose();
-  };
+    onClose()
+  }
 
   return (
     <div className='z-10 fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4'>
@@ -93,7 +92,9 @@ const BetDetails: React.FC<BetDetailsProps> = ({
         </div>
 
         <h3 className='text-2xl font-bold mt-6'>{title}</h3>
-        <p className='text-base mt-4 mb-7 font-light text-[#ECECEC]'>{description}</p>
+        <p className='text-base mt-4 mb-7 font-light text-[#ECECEC]'>
+          {description}
+        </p>
 
         <div className='flex flex-col space-y-5'>
           <div className='flex justify-between'>
@@ -131,24 +132,23 @@ const BetDetails: React.FC<BetDetailsProps> = ({
           </div>
         </div>
 
-        {error && <p className="text-red-500 mt-4">{error}</p>}
+        {error && <p className='text-red-500 mt-4'>{error}</p>}
 
         {isOpponent && !isJudgment && !acceptedCompetitor && (
-          <div className='flex justify-between mt-6 space-x-5'> 
+          <div className='flex justify-between mt-6 space-x-5'>
             <button
               onClick={handleDecline}
-              className='bg-red-600/30 hover:bg-red-700 text-red-300 rounded-lg w-full h-fit py-3'
+              className='bg-red-600/30  transition-all duration-300 hover:bg-red-700 text-red-300 rounded-lg w-full h-fit py-3'
             >
               Decline Bet
             </button>
             <button
               onClick={handleAccept}
               disabled={isAccepting}
-              className='bg-green-600/30 hover:bg-green-700 text-green-300 rounded-lg w-full h-fit py-3 disabled:opacity-50'
+              className='bg-green-600/30  transition-all duration-300 hover:bg-green-700 text-green-300 rounded-lg w-full h-fit py-3 disabled:opacity-50'
             >
               {isAccepting ? 'Accepting...' : 'Accept Bet'}
             </button>
-
           </div>
         )}
 
@@ -156,28 +156,27 @@ const BetDetails: React.FC<BetDetailsProps> = ({
           <div className='flex justify-between mt-6 space-x-5'>
             <button
               onClick={handleDecline}
-              className='bg-red-600/30 hover:bg-red-700 text-red-300 rounded-lg w-full h-fit py-3'
+              className='bg-red-600/30  transition-all duration-300 hover:bg-red-700 text-red-300 rounded-lg w-full h-fit py-3'
             >
               Decline Judging
             </button>
             <button
               onClick={handleJudgeAccept}
               disabled={isAccepting}
-              className='bg-green-600/30 hover:bg-green-700 text-green-300 rounded-lg w-full h-fit py-3 disabled:opacity-50'
+              className='bg-green-600/30  transition-all duration-300 hover:bg-green-700 text-green-300 rounded-lg w-full h-fit py-3 disabled:opacity-50'
             >
               {isAccepting ? 'Accepting...' : 'Accept Judging'}
             </button>
-
           </div>
         )}
 
         {isJudgment && (
           <div className='flex justify-between mt-6 space-x-5'>
-            <button className='bg-wagerBlue/10 hover:bg-wagerBlue/20 text-gray rounded-lg w-full h-fit py-3'>
+            <button className='bg-wagerBlue/10  transition-all duration-300 hover:bg-wagerBlue/20 text-gray rounded-lg w-full h-fit py-3'>
               Cancel Bet
             </button>
             <button
-              className='bg-wagerLilac hover:wagerLilac/80 text-white rounded-lg w-full font-bold h-fit py-3'
+              className='bg-wagerLilac  transition-all duration-300 hover:wagerLilac/80 text-white rounded-lg w-full font-bold h-fit py-3'
               onClick={openWinnerModal}
             >
               Pick winner
@@ -186,7 +185,7 @@ const BetDetails: React.FC<BetDetailsProps> = ({
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default BetDetails;
+export default BetDetails
