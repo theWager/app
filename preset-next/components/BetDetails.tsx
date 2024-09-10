@@ -73,21 +73,21 @@ const BetDetails: React.FC<BetDetailsProps> = ({
         </div>
         {!isJudgment && (
           <div className='flex justify-between mt-6 space-x-5'>
-            <button className='bg-green-600/30 hover:bg-green-700 text-green-300 rounded-lg w-full h-fit	py-3'>
+            <button className='bg-green-600/30 transition-all duration-300 hover:bg-green-700 text-green-300 rounded-lg w-full h-fit	py-3'>
               Accept Bet
             </button>
-            <button className='bg-red-600/30 hover:bg-red-700 text-red-300 rounded-lg w-full h-fit py-3'>
+            <button className='bg-red-600/30 transition-all duration-300 hover:bg-red-700 text-red-300 rounded-lg w-full h-fit py-3'>
               Decline Bet
             </button>
           </div>
         )}
         {isJudgment && (
           <div className='flex justify-between mt-6 space-x-5'>
-            <button className='bg-wagerBlue/10 hover:bg-wagerBlue/20 text-gray rounded-lg w-full h-fit py-3'>
+            <button className='bg-wagerBlue/10 transition-all duration-300 hover:bg-wagerBlue/20 text-gray rounded-lg w-full h-fit py-3'>
               Cancel Bet
             </button>
             <button
-              className='bg-wagerLilac hover:wagerLilac/80 text-white rounded-lg w-full font-bold h-fit py-3'
+              className='bg-wagerLilac transition-all duration-300 hover:wagerLilac/80 text-white rounded-lg w-full font-bold h-fit py-3'
               onClick={openWinnerModal}
             >
               Pick winner

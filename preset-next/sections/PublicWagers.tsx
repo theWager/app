@@ -33,14 +33,16 @@ const CategoryGridCarousel = () => {
   }
 
   return (
-    <div className='relative w-full min-h-[150px] bg-wagerBlue p-6 rounded-2xl border border-wagerBlue'>
-      <h1 className='text-2xl font-bold text-white'>Public Wagers</h1>
-      <h3 className='text-white font-light mt-2 w-[90%]'>
+    <div className='relative w-full min-h-[150px] bg-wagerBlue py-6 rounded-2xl border border-wagerBlue'>
+      <h1 className='text-2xl font-bold text-white px-6 z-20 relative'>
+        Public Wagers
+      </h1>
+      <h3 className='text-white font-light mt-2 w-[90%] px-6 z-20 relative'>
         Our hand picked categories with custom assigned judges for each one.
       </h3>
       <div
         ref={scrollRef}
-        className='flex overflow-x-auto space-x-6 scrollbar-hide snap-x snap-mandatory mt-8'
+        className='flex overflow-x-auto overflow-y-visible space-x-6 px-6 scrollbar-hide snap-x snap-mandatory mt-8'
         style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
         onScroll={checkScrollPosition}
       >

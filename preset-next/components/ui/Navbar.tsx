@@ -13,9 +13,9 @@ import { WalletButton } from '../solana/solana-provider'
 import IconButton from './Button'
 import PixelGrid from '../../public/pixel-grid.png'
 import Marquee from 'react-fast-marquee'
-import { VT323 } from 'next/font/google'
+import { DotGothic16 } from 'next/font/google'
 
-const vt323 = VT323({ subsets: ['latin'], weight: ['400'] })
+const dg16 = DotGothic16({ subsets: ['latin'], weight: ['400'] })
 type NavbarProps = {
   isHome?: boolean
 }
@@ -60,8 +60,27 @@ const Navbar: React.FC<NavbarProps> = ({ isHome = false }) => {
             className='top-1/2'
             style={{ position: 'absolute', transform: 'translateY(-50%)' }}
           >
-            <span className={'ml-6 text-wagerGreen ' + vt323.className}>
-              Trump wins US elections?
+            <span className={'ml-6 text-white text-xl' + dg16.className}>
+              Value Locked:
+              <span
+                className={'ml-6 text-wagerGreen text-xl ' + dg16.className}
+              >
+                1358.01 SOL
+              </span>
+            </span>
+            <span className={'ml-6 text-wagerGreen text-xl ' + dg16.className}>
+              Paid Out:
+              <span className={'ml-6 text-red-500 text-xl ' + dg16.className}>
+                1358.01 SOL
+              </span>
+            </span>
+            <span className={'ml-6 text-white text-xl ' + dg16.className}>
+              Bets:
+              <span
+                className={'ml-6 text-wagerGreen text-xl ' + dg16.className}
+              >
+                7542
+              </span>
             </span>
           </Marquee>
         </div>
@@ -72,7 +91,7 @@ const Navbar: React.FC<NavbarProps> = ({ isHome = false }) => {
             <Link
               key={path}
               href={path}
-              className={`text-white hover:text-teal-400 hidden md:inline ${
+              className={`text-white transition-all duration-300 hover:text-teal-400 hidden md:inline ${
                 pathname.startsWith(path) ? 'text-teal-400' : ''
               }`}
             >
@@ -80,7 +99,7 @@ const Navbar: React.FC<NavbarProps> = ({ isHome = false }) => {
             </Link>
           ))}
           {/* <Bell
-          className="text-white hover:text-teal-400 cursor-pointer"
+          className="text-white transition-all duration-300 hover:text-teal-400 cursor-pointer"
           size={20}
         /> */}
           <WalletButton />

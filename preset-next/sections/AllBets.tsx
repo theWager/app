@@ -23,25 +23,27 @@ const AllBetsHeader: React.FC<AllBetsHeaderProps> = ({
   page,
   bets,
 }) => {
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-  const [selectedBet, setSelectedBet] = useState<Bet | null>(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false)
+  const [selectedBet, setSelectedBet] = useState<Bet | null>(null)
 
-  const openCreateModal = () => setIsCreateModalOpen(true);
-  const closeCreateModal = () => setIsCreateModalOpen(false);
+  const openCreateModal = () => setIsCreateModalOpen(true)
+  const closeCreateModal = () => setIsCreateModalOpen(false)
 
   const handleBetClick = (bet: Bet) => {
-    setSelectedBet(bet);
-    setIsDetailsModalOpen(true);
-  };
+    setSelectedBet(bet)
+    setIsDetailsModalOpen(true)
+  }
 
   const closeDetailsModal = () => {
-    setIsDetailsModalOpen(false);
-    setSelectedBet(null);
-  };
+    setIsDetailsModalOpen(false)
+    setSelectedBet(null)
+  }
 
   return (
-    <div className={`bg-navy-900 rounded-2xl shadow-lg border border-wagerBlue p-6`}>
+    <div
+      className={`bg-navy-900 rounded-2xl shadow-lg border border-wagerBlue p-6`}
+    >
       <div className='flex items-center justify-between pb-6 pt-1 border-b border-wagerBlue'>
         <div className='flex items-center'>
           <h1 className='text-xl sm:text-3xl font-bold text-teal-400'>
@@ -50,7 +52,7 @@ const AllBetsHeader: React.FC<AllBetsHeaderProps> = ({
           {page === BetPages.ALL && (
             <button
               onClick={openCreateModal}
-              className="bg-wagerLilac/50 text-white text-sm font-bold inline-flex py-2 ml-5 md:ml-6 px-3 justify-center items-center gap-1 flex-shrink-0 rounded-lg hover:opacity-60 transition-colors duration-200"
+              className='bg-wagerLilac/50 text-white text-sm font-bold inline-flex py-2 ml-5 md:ml-6 px-3 justify-center items-center gap-1 flex-shrink-0 rounded-lg transition-all duration-300 hover:opacity-60 transition-colors duration-200'
               disabled={!isLoggedIn}
             >
               <Image src={Plus} alt={`icon`} className='w-4.5 h-4.5' />
@@ -87,7 +89,11 @@ const AllBetsHeader: React.FC<AllBetsHeaderProps> = ({
       </div>
 
       <CreateBetModal isOpen={isCreateModalOpen} onClose={closeCreateModal} />
-      <BetDetailsModal bet={selectedBet} isOpen={isDetailsModalOpen} onClose={closeDetailsModal} />
+      <BetDetailsModal
+        bet={selectedBet}
+        isOpen={isDetailsModalOpen}
+        onClose={closeDetailsModal}
+      />
     </div>
   )
 }

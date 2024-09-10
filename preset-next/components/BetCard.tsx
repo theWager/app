@@ -29,7 +29,7 @@ const BetCard: React.FC<BetCardProps> = props => {
   return (
     <>
       <div
-        className='bg-wagerBlue/20 rounded-xl p-6 min-w-[250px] max-w-[500px] hover:cursor-pointer'
+        className='bg-wagerBlue/20 rounded-xl p-6 min-w-[250px] max-w-[500px]  transition-all duration-300 hover:-translate-y-2 cursor-pointer'
         onClick={openDetailsModal}
       >
         <div className='flex justify-between items-center mb'>
