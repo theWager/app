@@ -59,7 +59,7 @@ const AllBetsHeader: React.FC<AllBetsHeaderProps> = ({
               disabled={!isLoggedIn}
             >
               <Image src={Plus} alt={`icon`} className='w-4.5 h-4.5' />
-              Create a bet
+              Create Wager
             </button>
           )}
         </div>

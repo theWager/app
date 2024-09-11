@@ -128,7 +128,7 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
     <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 overflow-y-scroll'>
       <div className='bg-gray-900 text-white p-6 rounded-lg max-w-md w-full absolute top-0'>
         <div className='flex justify-between items-center mb-6'>
-          <h2 className='text-2xl font-bold text-teal-400'>Create a bet</h2>
+          <h2 className='text-2xl font-bold text-teal-400'>Create Wager</h2>
           <button
             onClick={onClose}
             className='text-gray-400  transition-all duration-300 hover:text-white'
@@ -357,7 +357,7 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
               type='submit'
               className='flex-1 px-4 py-2 bg-purple-600 text-white rounded  transition-all duration-300 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500'
             >
-              Create a Bet
+              Create Wager
             </button>
           </div>
         </form>
