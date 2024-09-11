@@ -8,7 +8,7 @@ import Money from '@/assets/money.svg'
 import MoneyDark from '@/assets/moneyDark.svg'
 
 export const NAVBAR_LINKS: { label: string; path: string }[] = [
-  { label: 'How it works', path: '/how' },
+  { label: 'How it works', path: '/' },
 ]
 
 export const CATEGORIES: BetCategory[] = [
