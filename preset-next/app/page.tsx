@@ -14,7 +14,7 @@ const Index = () => {
   return (
     <HomeLayout>
       {' '}
-      <div className='z-10 absolute left-20 top-2/3 lg:top-1/2 -translate-y-1/2'>
+      <div className='z-10 absolute left-6 md:left-12 lg:left-20 top-2/3 lg:top-1/2 -translate-y-1/2'>
         <h1 className='text-white font-bold text-[64px] md:text-[96px] drop-shadow-[2px_4px_6px_black] leading-[90%] tracking-[-5px]  '>
           Put your{' '}
           <span
@@ -37,7 +37,7 @@ const Index = () => {
             title='Get started'
           />
           <IconButton
-            classes='inline-flex px-6 py-2 rounded-lg bg-transparent text-base font-light text-gray-400 transition-all duration-300 hover:-translate-y-2 '
+            classes='inline-flex px-3 md:px-6 py-2 rounded-lg bg-transparent text-base font-light text-gray-400 transition-all duration-300 hover:-translate-y-2 '
             href='#'
             title='Read Documentation'
           />

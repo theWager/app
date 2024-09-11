@@ -78,7 +78,7 @@ const BetDetails: React.FC<BetDetailsProps> = ({
   }
 
   return (
-    <div className='z-10 fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4'>
+    <div className='z-30 fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4'>
       <div className='flex flex-col bg-darknavy text-white p-6 border border-wagerBlue rounded-[20px] shadow-lg max-w-lg w-full'>
         <div className='flex justify-start items-center pb-6 border-b border-wagerBlue'>
           <h2 className='text-3xl font-bold text-green-400 mr-6'> Bet</h2>

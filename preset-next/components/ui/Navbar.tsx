@@ -25,7 +25,7 @@ const Navbar: React.FC<NavbarProps> = ({ isHome = false }) => {
 
   return (
     <nav
-      className={`z-10 flex items-center justify-between bg-transparent px-16 ${
+      className={`z-10 flex items-center justify-between bg-transparent px-6 lg:px-16 ${
         isHome ? 'py-6' : 'py-3'
       }`}
     >
@@ -51,7 +51,7 @@ const Navbar: React.FC<NavbarProps> = ({ isHome = false }) => {
       </div>
       {!isHome && (
         <div
-          className='flex-grow h-full relative rounded-lg overflow-hidden mx-6 lg:mx-12'
+          className='flex-grow h-full relative rounded-lg overflow-hidden mx-6 lg:mx-12  hidden lg:flex'
           style={{ backgroundImage: `url(${PixelGrid.src})` }}
         >
           <Marquee
