@@ -102,7 +102,7 @@ const BetDetails: React.FC<BetDetailsProps> = ({
             <span>{createdBy}</span>
           </div>
           <div className='flex justify-between'>
-            <span className='text-gray-400 font-light'>Bet amount</span>
+            <span className='text-gray-400 font-light'>Amount</span>
             <span className='text-wagerGreen font-bold'>{amount + ' SOL'}</span>
           </div>
           <div className='flex justify-between'>
