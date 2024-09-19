@@ -51,7 +51,7 @@ export default function AllBets() {
         <CategoryGridCarousel />
         <AllBetsHeader
           isLoggedIn
-          title='All Bets'
+          title='All Wagers'
           bets={allBets}
           page={BetPages.ALL}
         />

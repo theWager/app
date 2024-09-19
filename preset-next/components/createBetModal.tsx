@@ -96,17 +96,17 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
 
       setSnackbar({
         open: true,
-        message: 'Bet created successfully!',
+        message: 'Wager created successfully!',
         type: 'success',
       })
       setTimeout(() => {
         onClose()
       }, 2000)
     } catch (error) {
-      console.error('Error creating bet:', error)
+      console.error('Error creating wager:', error)
       setSnackbar({
         open: true,
-        message: 'Error creating bet. Please try again.',
+        message: 'Error creating wager. Please try again.',
         type: 'error',
       })
     }
@@ -163,7 +163,7 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
               htmlFor='title'
               className='block text-sm font-medium text-teal-400 mb-1'
             >
-              Bet Title
+              Wager Title
             </label>
             <input
               type='text'
@@ -181,7 +181,7 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
               htmlFor='description'
               className='block text-sm font-medium text-teal-400 mb-1'
             >
-              Bet Description
+              Description
             </label>
             <textarea
               id='description'
@@ -228,7 +228,7 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
                 htmlFor='amount'
                 className='block text-sm font-medium text-teal-400 mb-1'
               >
-                Bet Amount
+                Amount to wager
               </label>
               <div className='flex'>
                 <input
