@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { X, ChevronDown, CheckCircle, XCircle } from 'lucide-react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import PocketBase from 'pocketbase'
+import { set } from '@coral-xyz/anchor/dist/cjs/utils/features'
 
 // Initialize PocketBase
 const pb = new PocketBase('https://wager.pockethost.io')
@@ -30,6 +31,7 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
 
   const [username, setUsername] = useState('')
   const [showUsernameField, setShowUsernameField] = useState(false)
+  const [belowUsernameText, setBelowUsernameText] = useState('')
 
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -66,8 +68,19 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
     }))
   }
 
-  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUsernameChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(e.target.value)
+
+    // Unique username must be set for participating
+    try {
+      const result = await pb
+      .collection('users')
+      .getFirstListItem(`name="${e.target.value}"`)
+
+      setBelowUsernameText('Username already exists')
+    } catch (error) {
+      setBelowUsernameText('')
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -152,10 +165,11 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
                 name='username'
                 value={username}
                 onChange={handleUsernameChange}
-                placeholder='Enter your username'
+                placeholder='Username must be set for participating'
                 className='w-full bg-gray-800 rounded px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500'
                 required
               />
+              <label className='text-sm text-red-500'>{belowUsernameText}</label>
             </div>
           )}
           <div>
