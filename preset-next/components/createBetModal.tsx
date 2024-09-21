@@ -185,7 +185,7 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
               name='title'
               value={formData.title}
               onChange={handleInputChange}
-              placeholder='Type the wager title'
+              placeholder='e.g. Will Trump win the U.S. elections?'
               className='w-full bg-gray-800 rounded px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500'
             />
           </div>
@@ -203,7 +203,7 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
               value={formData.description}
               onChange={handleInputChange}
               rows={3}
-              placeholder='Type Bet Description'
+              placeholder='Here you describe what side of the wager you are on. e.g. I think Trump will lose the election!'
               className='w-full bg-gray-800 rounded px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500'
             ></textarea>
           </div>
