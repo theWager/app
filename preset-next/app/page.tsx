@@ -1,56 +1,61 @@
-import Hero from '@/assets/hero.png'
-import IconButton from '@/components/ui/Button'
-import { HomeLayout } from '@/layouts/HomeLayout'
-import { Cherry_Bomb_One } from 'next/font/google'
-import Image from 'next/image'
-const cherry = Cherry_Bomb_One({
-  weight: ['400'],
-  subsets: ['latin'],
-  display: 'swap',
-  adjustFontFallback: false,
-})
+'use client'
+import { DashboardLayout } from '@/layouts/DashboardLayout'
+import AllBetsHeader from '@/sections/AllBets'
+import CategoryGridCarousel from '@/sections/PublicWagers'
+import { BetPages } from '@/util/Enums'
+import { BetsMapper } from '@/util/ORM'
+import { PocketBaseBet, PocketBaseUser } from '@/util/PocketbaseTypes'
+import { Bet } from '@/util/Types'
+import PocketBase from 'pocketbase'
+import { useEffect, useState } from 'react'
 
-const Index = () => {
+const pb = new PocketBase('https://wager.pockethost.io')
+
+export default function AllBets() {
+  const [allBets, setAllBets] = useState<Bet[]>([])
+
+
+  const fetchBets = async () => {
+    try {
+
+      const storedBets = await pb
+        .collection('bets')
+        .getFullList<PocketBaseBet>({
+          sort: '-created',
+        })
+
+
+      const storedUsers = await pb
+        .collection('users')
+        .getFullList<PocketBaseUser>({
+          sort: '-created',
+        })
+
+      const transformedBets = BetsMapper(storedBets, storedUsers)
+
+      setAllBets(transformedBets)
+
+
+    } catch (error) {
+      console.error('Error fetching bets:', error)
+    }
+  }
+
+  useEffect(() => {
+    fetchBets()
+  }, [])
+
   return (
-    <HomeLayout>
-      {' '}
-      <div className='z-10 absolute left-6 md:left-12 lg:left-20 top-2/3 lg:top-1/2 -translate-y-1/2'>
-        <h1 className='text-white font-bold text-[64px] md:text-[96px] drop-shadow-[2px_4px_6px_black] leading-[90%] tracking-[-5px]  '>
-          Put your{' '}
-          <span
-            className={`${cherry.className} text-[82px] md:text-[110px] text-wagerGreen`}
-          >
-            money
-          </span>
-          <br /> where your{' '}
-          <span
-            className={`${cherry.className} text-[82px] md:text-[110px] text-wagerLilac`}
-          >
-            mouth
-          </span>{' '}
-          is.
-        </h1>
-        <div className='flex gap-6 mt-12'>
-          <IconButton
-            href='/all-bets'
-            classes='bg-wagerLilac/50 px-6  text-white text-base font-bold inline-flex py-2 md:ml-6 transition-all duration-300 hover:-translate-y-2 '
-            title='Get started'
-          />
-          <IconButton
-            classes='inline-flex px-3 md:px-6 py-2 rounded-lg bg-transparent text-base font-light text-gray-400 transition-all duration-300 hover:-translate-y-2 '
-            href='#'
-            title='Read Documentation'
-          />
-        </div>
+    <DashboardLayout>
+      <div className='p-4 flex flex-col gap-y-4 bg-darknavy'>
+        <CategoryGridCarousel />
+        <AllBetsHeader
+          isLoggedIn
+          title='All Wagers'
+          bets={allBets}
+          page={BetPages.ALL}
+        />
       </div>
-      <Image
-        src={Hero}
-        alt='hero'
-        className='h-auto lg:h-full absolute -z-10s top-0 right-0 w-auto'
-      />
-      <div></div>
-    </HomeLayout>
+    </DashboardLayout>
   )
 }
-
-export default Index
