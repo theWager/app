@@ -35,10 +35,10 @@ const CategoryGridCarousel = () => {
   return (
     <div className='relative w-full min-h-[150px] bg-wagerBlue py-6 rounded-2xl border border-wagerBlue'>
       <h1 className='text-2xl font-bold text-white px-6 z-20 relative italic'>
-        Platform Specific Wagers
+        Platform Wagers
       </h1>
       <h3 className='text-white font-light mt-2 w-[90%] px-6 z-20 relative italic'>
-        Judging is conducted by platform specific judges introduced to the community.
+        Judging 'Platform Wagers' is conducted by theWager. Outcomes can only be binary objectively verifiable events.
       </h3>
       <div
         ref={scrollRef}
