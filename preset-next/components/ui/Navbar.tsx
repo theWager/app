@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import React from 'react'
+import React, { useState } from 'react'
 import Discord from '../../assets/discord.svg'
 import Logo from '../../assets/wager.svg'
 import Telegram from '../../assets/telegram.svg'
@@ -14,6 +14,8 @@ import IconButton from './Button'
 import PixelGrid from '../../public/pixel-grid.png'
 import Marquee from 'react-fast-marquee'
 import { DotGothic16 } from 'next/font/google'
+import { useWallet } from '@solana/wallet-adapter-react'
+import HowItWorksModal from '../HowItWorksModal'
 
 const dg16 = DotGothic16({ subsets: ['latin'], weight: ['400'] })
 type NavbarProps = {
@@ -22,12 +24,12 @@ type NavbarProps = {
 
 const Navbar: React.FC<NavbarProps> = ({ isHome = false }) => {
   const pathname = usePathname()
-
+  const wallet = useWallet()
+  const [isHIWModalOpen, setIsHIWModalOpen] = useState(false)
   return (
     <nav
-      className={`z-10 flex items-center justify-between bg-transparent px-6 lg:px-16 ${
-        isHome ? 'py-6' : 'py-3'
-      }`}
+      className={`z-10 flex items-center justify-between bg-transparent px-4 ${isHome ? 'py-6' : 'py-3'
+        }`}
     >
       <div className='flex items-center space-x-4'>
         <Link
@@ -39,12 +41,6 @@ const Navbar: React.FC<NavbarProps> = ({ isHome = false }) => {
         <IconButton
           icon={Discord}
           title='Discord'
-          href='#'
-          classes='hidden md:inline-flex '
-        />
-        <IconButton
-          icon={Telegram}
-          title='Telegram'
           href='#'
           classes='hidden md:inline-flex '
         />
@@ -85,27 +81,46 @@ const Navbar: React.FC<NavbarProps> = ({ isHome = false }) => {
           </Marquee>
         </div>
       )}
-      {!isHome && (
-        <div className='flex items-center space-x-4'>
-          {NAVBAR_LINKS.map(({ label, path }) => (
+      <div className='flex items-center space-x-6'>
+        {wallet.connected &&
+          NAVBAR_LINKS.map(({ label, path }) => (
             <Link
               key={path}
               href={path}
-              className={`text-white  transition-all duration-300 hover:text-teal-400 hidden md:inline ${
-                pathname.startsWith(path) ? 'text-teal-400' : ''
-              }`}
+              className={`text-white  transition-all duration-300 hover:text-teal-400 hidden md:inline ${pathname.startsWith(path) ? 'text-teal-400' : ''
+                }`}
             >
               {label}
             </Link>
           ))}
-          {/* <Bell
+        {/* <Bell
           className="text-white  transition-all duration-300 hover:text-teal-400 cursor-pointer"
           size={20}
         /> */}
-          <WalletButton />
-          <ClusterUiSelect />
-        </div>
-      )}
+        <WalletButton />
+        <ClusterUiSelect />
+        <div
+          onClick={() => {
+            setIsHIWModalOpen(true)
+          }}
+          className={`
+              hidden md:inline-flex
+              items-center justify-center
+              w-8 h-8
+              font-bold text-lg
+              text-white
+              transition-all duration-300
+              hover:text-teal-400
+              hover: cursor-pointer
+              rounded-full
+              bg-white/10
+              hover:bg-white/20
+            `}
+        >
+          ?
+        </div>{' '}
+      </div>
+      <HowItWorksModal isOpen={isHIWModalOpen} onClose={() => setIsHIWModalOpen(false)} />
     </nav>
   )
 }

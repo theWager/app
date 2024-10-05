@@ -9,7 +9,7 @@ export const HomeLayout: React.FC<PropsWithChildren> = ({ children }) => {
   return (
     <div className='h-full flex flex-col bg-darknavy'>
       <Navbar isHome={true} />
-      <div className='flex-grow w-full'>
+      <div className='flex-grow w-full z-[1]'>
         <Suspense
           fallback={
             <div className='text-center my-32'>

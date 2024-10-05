@@ -8,19 +8,19 @@ type ButtonProps = {
   href: string
   classes?: string
   disabled?: boolean
+  onClick?: () => void
 }
 
-const IconButton: React.FC<ButtonProps> = ({ icon, title, href, classes }) => {
+const IconButton: React.FC<ButtonProps> = ({ icon, title, href, classes, onClick }) => {
   return (
     <Link
+      onClick={onClick}
       href={href}
-      className={
-        classes +
-        'inline-flex px-3 justify-center items-center gap-1 flex-shrink-0 text-sm bg-transparent text-white rounded-lg transition-all duration-300 hover:opacity-60'
+      className={`${classes} inline-flex px-3 justify-center items-center gap-1 flex-shrink-0 text-sm bg-transparent text-white rounded-lg transition-all duration-300 hover:opacity-60`
       }
     >
       {icon && (
-        <Image src={icon} alt={`${title} icon`} className='w-4.5 h-4.5' />
+        <Image src={icon} alt={`${title} icon`} className='w-4.5 h-4.5 ' />
       )}
       {title}
     </Link>

@@ -74,8 +74,8 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
     // Unique username must be set for participating
     try {
       const result = await pb
-      .collection('users')
-      .getFirstListItem(`name="${e.target.value}"`)
+        .collection('users')
+        .getFirstListItem(`name="${e.target.value}"`)
 
       setBelowUsernameText('Username already exists')
     } catch (error) {
@@ -331,10 +331,10 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
               htmlFor='expire_date'
               className='block text-sm font-medium text-teal-400 mb-1'
             >
-              Expiry Date
+              Expiry Date and Time
             </label>
             <input
-              type='date'
+              type='datetime-local'
               id='expire_date'
               name='expire_date'
               value={formData.expire_date}
@@ -347,10 +347,10 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
               htmlFor='end_date'
               className='block text-sm font-medium text-teal-400 mb-1'
             >
-              End Date
+              End Date and Time
             </label>
             <input
-              type='date'
+              type='datetime-local'
               id='end_date'
               name='end_date'
               value={formData.end_date}
@@ -378,9 +378,8 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
       </div>
       {snackbar.open && (
         <div
-          className={`fixed bottom-4 right-4 px-4 py-2 rounded-md shadow-lg flex items-center space-x-2 ${
-            snackbar.type === 'success' ? 'bg-green-500' : 'bg-red-500'
-          }`}
+          className={`fixed bottom-4 right-4 px-4 py-2 rounded-md shadow-lg flex items-center space-x-2 ${snackbar.type === 'success' ? 'bg-green-500' : 'bg-red-500'
+            }`}
         >
           {snackbar.type === 'success' ? (
             <CheckCircle className='text-white' size={20} />
