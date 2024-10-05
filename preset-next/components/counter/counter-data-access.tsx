@@ -1,6 +1,6 @@
 'use client'
 
-import { getWagerProgram, getWagerProgramId } from '@thewager/anchor'
+import { getWagerProgram, getWagerProgramId } from '../../blockchain/src'
 import { BN, Program, web3 } from '@coral-xyz/anchor'
 import { useConnection } from '@solana/wallet-adapter-react'
 import { Cluster, Keypair, PublicKey } from '@solana/web3.js'
