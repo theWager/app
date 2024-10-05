@@ -1,0 +1,373 @@
+{
+  "address": "9yd2CBpcNGivHZ9tBD3wYVejRaHjf3P4aJxhQ3Sxh9jh",
+  "metadata": {
+    "name": "the_wager_program",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "accept_judging",
+      "discriminator": [
+        114,
+        194,
+        67,
+        207,
+        242,
+        221,
+        43,
+        56
+      ],
+      "accounts": [
+        {
+          "name": "wager",
+          "writable": true
+        },
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "accept_wager",
+      "discriminator": [
+        214,
+        18,
+        178,
+        214,
+        203,
+        22,
+        50,
+        119
+      ],
+      "accounts": [
+        {
+          "name": "wager",
+          "writable": true
+        },
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "cancel_wager",
+      "discriminator": [
+        57,
+        92,
+        124,
+        123,
+        216,
+        16,
+        37,
+        148
+      ],
+      "accounts": [
+        {
+          "name": "wager",
+          "writable": true
+        },
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "create_wager",
+      "discriminator": [
+        210,
+        82,
+        178,
+        75,
+        253,
+        34,
+        84,
+        120
+      ],
+      "accounts": [
+        {
+          "name": "wager",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  119,
+                  97,
+                  103,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "arg",
+                "path": "wager_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "wager_id",
+          "type": "u64"
+        },
+        {
+          "name": "opponent",
+          "type": {
+            "option": "pubkey"
+          }
+        },
+        {
+          "name": "judge",
+          "type": "pubkey"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        },
+        {
+          "name": "expiration_date",
+          "type": "i64"
+        },
+        {
+          "name": "end_date",
+          "type": "i64"
+        },
+        {
+          "name": "odds_numerator",
+          "type": "u16"
+        },
+        {
+          "name": "odds_denominator",
+          "type": "u16"
+        }
+      ]
+    },
+    {
+      "name": "declare_winner",
+      "discriminator": [
+        140,
+        135,
+        197,
+        50,
+        9,
+        23,
+        4,
+        80
+      ],
+      "accounts": [
+        {
+          "name": "wager",
+          "writable": true
+        },
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "winner",
+          "writable": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "winner",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "refund_wager",
+      "discriminator": [
+        208,
+        62,
+        96,
+        78,
+        126,
+        46,
+        251,
+        157
+      ],
+      "accounts": [
+        {
+          "name": "wager",
+          "writable": true
+        },
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Wager",
+      "discriminator": [
+        3,
+        110,
+        53,
+        190,
+        113,
+        31,
+        230,
+        40
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InvalidCaller",
+      "msg": "No access"
+    },
+    {
+      "code": 6001,
+      "name": "WagerNotReady",
+      "msg": "Wager not ready"
+    },
+    {
+      "code": 6002,
+      "name": "WagerExpired",
+      "msg": "Wager has expired"
+    },
+    {
+      "code": 6003,
+      "name": "WagerNotEnded",
+      "msg": "Wager has not ended yet"
+    },
+    {
+      "code": 6004,
+      "name": "InvalidExpirationDate",
+      "msg": "Invalid expiration date"
+    },
+    {
+      "code": 6005,
+      "name": "InvalidEndDate",
+      "msg": "Invalid end date"
+    },
+    {
+      "code": 6006,
+      "name": "WagerAlreadyAccepted",
+      "msg": "Wager has already been accepted"
+    },
+    {
+      "code": 6007,
+      "name": "WagerNotExpired",
+      "msg": "Wager has not expired yet"
+    },
+    {
+      "code": 6008,
+      "name": "InvalidOdds",
+      "msg": "Invalid odds"
+    },
+    {
+      "code": 6009,
+      "name": "InsufficientDeposit",
+      "msg": "Insufficient deposit"
+    },
+    {
+      "code": 6010,
+      "name": "CalculationError",
+      "msg": "Calculation error"
+    }
+  ],
+  "types": [
+    {
+      "name": "Wager",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "id",
+            "type": "u64"
+          },
+          {
+            "name": "wager_initiator",
+            "type": "pubkey"
+          },
+          {
+            "name": "opponent",
+            "type": {
+              "option": "pubkey"
+            }
+          },
+          {
+            "name": "judge",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "expiration_date",
+            "type": "i64"
+          },
+          {
+            "name": "end_date",
+            "type": "i64"
+          },
+          {
+            "name": "opponent_accepted",
+            "type": "bool"
+          },
+          {
+            "name": "judge_accepted",
+            "type": "bool"
+          },
+          {
+            "name": "winner",
+            "type": {
+              "option": "pubkey"
+            }
+          },
+          {
+            "name": "odds_numerator",
+            "type": "u16"
+          },
+          {
+            "name": "odds_denominator",
+            "type": "u16"
+          }
+        ]
+      }
+    }
+  ]
+}
