@@ -111,8 +111,9 @@ export function useCounterProgram() {
           oddsDenominator,
         )
         .accounts({
-          user: wagerInitiator,
+          //@ts-ignore
           wager: wagerPda,
+          user: wagerInitiator,
           systemProgram: web3.SystemProgram.programId,
         })
         .rpc()
@@ -225,6 +226,7 @@ export function useCounterProgram() {
           wager: wagerPda,
           user: judge,
           winner: winner,
+          //@ts-ignore
           systemProgram: web3.SystemProgram.programId,
         })
         .rpc()
