@@ -48,4 +48,3 @@ anchor/target/.rustc_info.json
 test-ledger
 .yarn
 
-preset-next/blockchain/target*
