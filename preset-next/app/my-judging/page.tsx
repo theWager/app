@@ -80,7 +80,7 @@ function MyBetsContent() {
       ) : (
         <AllBetsHeader
           isLoggedIn={!!wallet.publicKey}
-          title='My Bets'
+          title='My Judging'
           bets={myBets}
               page={BetPages.JUDGING}
         />

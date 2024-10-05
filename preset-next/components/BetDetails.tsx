@@ -3,6 +3,9 @@ import { Bet } from '@/util/Types'
 import StatusCrumb from './ui/Status'
 import { useWallet } from '@solana/wallet-adapter-react'
 import PocketBase from 'pocketbase'
+import { useCounterProgram, useCounterProgramAccount } from './counter/counter-data-access'
+import { Keypair, PublicKey } from '@solana/web3.js'
+import { BN } from '@coral-xyz/anchor'
 
 // Initialize PocketBase
 const pb = new PocketBase('https://wager.pockethost.io')
@@ -37,6 +40,7 @@ const BetDetails: React.FC<BetDetailsProps> = ({
 }) => {
   const wallet = useWallet()
   const [isAccepting, setIsAccepting] = useState(false)
+  const { acceptWager, acceptJudging } = useCounterProgram() // is this correct?
 
   const [error, setError] = useState<string | null>(null)
 
@@ -48,8 +52,16 @@ const BetDetails: React.FC<BetDetailsProps> = ({
   const handleAccept = async () => {
     setIsAccepting(true)
     setError(null)
+    
     try {
-      await pb.collection('bets').update(id, { accepted_opponent: true })
+      
+      acceptWager.mutateAsync({
+        wagerId: new BN(123), // This should be the wager_chain_id in database
+        wagerInitiator: new PublicKey(competitorAddress), // This should be the user who started the bet
+        opponent: wallet.publicKey!
+      })
+
+      // await pb.collection('bets').update(id, { accepted_opponent: true })
       onClose() // Close the modal after successful update
     } catch (error) {
       console.error('Error accepting bet:', error)
@@ -63,7 +75,13 @@ const BetDetails: React.FC<BetDetailsProps> = ({
     setIsAccepting(true)
     setError(null)
     try {
-      await pb.collection('bets').update(id, { accepted_judge: true })
+      acceptJudging.mutateAsync({
+        wagerId: new BN(123), // This should be the wager_chain_id in database
+        wagerInitiator: new PublicKey(competitorAddress), // This should be the user who started the bet
+        judge: wallet.publicKey!
+      })
+
+      // await pb.collection('bets').update(id, { accepted_judge: true })
       onClose() // Close the modal after successful update
     } catch (error) {
       console.error('Error accepting judging:', error)

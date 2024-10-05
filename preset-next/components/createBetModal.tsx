@@ -3,6 +3,9 @@ import { X, ChevronDown, CheckCircle, XCircle } from 'lucide-react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import PocketBase from 'pocketbase'
 import { set } from '@coral-xyz/anchor/dist/cjs/utils/features'
+import { useCounterProgram } from './counter/counter-data-access'
+import { BN } from '@coral-xyz/anchor'
+import { PublicKey } from '@solana/web3.js'
 
 // Initialize PocketBase
 const pb = new PocketBase('https://wager.pockethost.io')
@@ -14,6 +17,7 @@ interface CreateBetModalProps {
 
 const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
   const wallet = useWallet()
+  const { createWager } = useCounterProgram()
 
   const [formData, setFormData] = useState({
     address_opponent: '',
@@ -97,13 +101,45 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
         Math.random().toString(36).substring(2, 15) +
         Math.random().toString(36).substring(2, 15)
 
+      
+      let wagerId
+      let wagerIdBN
+      try {
+        const records = await pb.collection('bets').getFullList()
+        wagerId = records.length + 1
+        wagerIdBN = new BN(wagerId)
+      } catch (error) {
+        wagerId = Math.random()*10000
+        wagerIdBN = new BN(wagerId)
+      }
+
       const betData = {
         ...formData,
         bet_hash: betHash,
         accepted_opponent: false,
         accepted_judge: false,
         address_creator: wallet.publicKey?.toBase58(),
+        wager_chain_id: wagerId,
       }
+
+      // Set expiration and end dates
+      const now = Math.floor(Date.now() / 1000);
+      const expirationDate = new BN(now + 3600); // 1 hour from now
+      const endDate = new BN(now + 7200); // 2 hours from now
+
+      // Create a create-wager transaction here
+      // TODO: Add transfer of solana tokens
+      createWager.mutateAsync({
+        wagerId: wagerIdBN, 
+        opponentAddress: new PublicKey(formData.address_opponent), 
+        judgeAddress: new PublicKey(formData.address_judge), 
+        wagerAmount: new BN(formData.amount), 
+        expirationDate, 
+        endDate, 
+        oddsNumerator: parseInt(formData.odd_created), 
+        oddsDenominator: parseInt(formData.odd_opponent), 
+        wagerInitiator: new PublicKey(wallet.publicKey as PublicKey)
+      })
 
       await pb.collection('bets').create(betData)
 
@@ -114,7 +150,7 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
       })
       setTimeout(() => {
         onClose()
-      }, 2000)
+      }, 3000)
     } catch (error) {
       console.error('Error creating wager:', error)
       setSnackbar({
