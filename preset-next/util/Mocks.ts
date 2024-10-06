@@ -1,6 +1,7 @@
 import { BinaryBet, Bet } from './Types'
 import { BetState } from './Enums'
 
+/*
 export const MOCK_BINARY_BETS: BinaryBet[] = [
   {
     id: '1',
@@ -255,3 +256,4 @@ export const MOCK_BETS: Bet[] = [
     judgeAddress: "b"
   },
 ]
+*/
