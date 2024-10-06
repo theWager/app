@@ -42,14 +42,14 @@ const BetDetails: React.FC<BetDetailsProps> = ({
 
   if (!isOpen) return null
 
-  const isOpponent = wallet.publicKey?.toBase58() === competitorAddress
+  const isOpponent = (wallet.publicKey?.toBase58() === competitorAddress) || (wallet.publicKey?.toBase58() && competitorAddress === '')
   const isJudge = wallet.publicKey?.toBase58() == judgeAddress
 
   const handleAccept = async () => {
     setIsAccepting(true)
     setError(null)
     try {
-      await pb.collection('bets').update(id, { accepted_opponent: true })
+      await pb.collection('bets').update(id, { accepted_opponent: true, address_opponent:  wallet.publicKey?.toBase58()})
       onClose() // Close the modal after successful update
     } catch (error) {
       console.error('Error accepting bet:', error)

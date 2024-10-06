@@ -32,6 +32,7 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
   const [username, setUsername] = useState('')
   const [showUsernameField, setShowUsernameField] = useState(false)
   const [belowUsernameText, setBelowUsernameText] = useState('')
+  const [isOpenToAnyone, setIsOpenToAnyone] = useState(false)
 
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -57,15 +58,24 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
   }, [wallet.publicKey])
 
   const handleInputChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) => {
-    const { name, value } = e.target
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: value,
-    }))
+    const { name, value, type } = e.target
+    if (type === 'checkbox') {
+      const checked = (e.target as HTMLInputElement).checked
+      setIsOpenToAnyone(checked)
+      if (checked) {
+        setFormData(prevState => ({
+          ...prevState,
+          address_opponent: '',
+        }))
+      }
+    } else {
+      setFormData(prevState => ({
+        ...prevState,
+        [name]: value,
+      }))
+    }
   }
 
   const handleUsernameChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -101,6 +111,8 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
         ...formData,
         bet_hash: betHash,
         accepted_opponent: false,
+        end_date: new Date(formData.end_date.toString().replace(' ', 'T')),
+        expire_date: new Date(formData.expire_date.toString().replace(' ', 'T')),
         accepted_judge: false,
         address_creator: wallet.publicKey?.toBase58(),
       }
@@ -305,7 +317,22 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
               onChange={handleInputChange}
               placeholder='Type Opponent Address'
               className='w-full bg-gray-800 rounded px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500'
+              disabled={isOpenToAnyone}
             />
+          </div>
+
+          <div className="flex items-center">
+          <input
+              type="checkbox"
+              id="openToAnyone"
+              name="openToAnyone"
+              checked={isOpenToAnyone}
+              onChange={handleInputChange}
+              className="form-checkbox h-5 w-5 text-teal-400 bg-gray-800 border-gray-600 rounded focus:ring-2 focus:ring-teal-400 focus:ring-opacity-50 checked:bg-teal-400 checked:border-transparent cursor-pointer"
+            />
+            <label htmlFor="openToAnyone" className="ml-2 text-sm font-medium text-teal-400 cursor-pointer">
+              Wager against anyone on theWager
+            </label>
           </div>
 
           <div>
