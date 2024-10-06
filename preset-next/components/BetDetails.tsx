@@ -3,13 +3,14 @@ import { Bet } from '@/util/Types'
 import StatusCrumb from './ui/Status'
 import { useWallet } from '@solana/wallet-adapter-react'
 import PocketBase from 'pocketbase'
-import { useCounterProgram, useCounterProgramAccount } from './counter/counter-data-access'
-import { Keypair, PublicKey } from '@solana/web3.js'
+import { useCounterProgram } from './counter/counter-data-access'
+import { PublicKey } from '@solana/web3.js'
 import { BN } from '@coral-xyz/anchor'
 import { CheckCircle, XCircle } from 'lucide-react'
 
 // Initialize PocketBase
 const pb = new PocketBase('https://wager.pockethost.io')
+
 type BetDetailsProps = Bet & {
   isJudgment: boolean
   isOpen: boolean
@@ -44,9 +45,24 @@ const BetDetails: React.FC<BetDetailsProps> = ({
   const wallet = useWallet()
   const [isAcceptingBet, setIsAcceptingBet] = useState(false)
   const [isAcceptingJudging, setIsAcceptingJudging] = useState(false)
-  const { acceptWager, acceptJudging } = useCounterProgram() // is this correct?
+  const { acceptWager, acceptJudging } = useCounterProgram()
   const [isDeleting, setIsDeleting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    type: 'success' as 'success' | 'error',
+  })
+
+  useEffect(() => {
+    if (snackbar.open) {
+      const timer = setTimeout(() => {
+        setSnackbar(prev => ({ ...prev, open: false }))
+      }, 5000)
+
+      return () => clearTimeout(timer)
+    }
+  }, [snackbar.open])
 
   if (!isOpen) return null
 
@@ -59,7 +75,6 @@ const BetDetails: React.FC<BetDetailsProps> = ({
     setError(null)
     
     try {
-
       await acceptWager.mutateAsync({
         wagerId: new BN(chainId),
         wagerInitiator: new PublicKey(creatorAddress),
@@ -71,11 +86,21 @@ const BetDetails: React.FC<BetDetailsProps> = ({
 
       await pb.collection('bets').update(id, { accepted_opponent: true })
 
-      onClose() // Close the modal after successful update
+      setSnackbar({
+        open: true,
+        message: 'Bet accepted successfully!',
+        type: 'success',
+      })
+
+      onClose()
     } catch (error) {
       console.error('Error accepting bet:', error)
       setError('Failed to accept bet. Please try again.')
-
+      setSnackbar({
+        open: true,
+        message: 'Error accepting bet. Please try again.',
+        type: 'error',
+      })
     } finally {
       setIsAcceptingBet(false)
     }
@@ -93,11 +118,21 @@ const BetDetails: React.FC<BetDetailsProps> = ({
 
       await pb.collection('bets').update(id, { accepted_judge: true })
 
-      onClose() // Close the modal after successful update
+      setSnackbar({
+        open: true,
+        message: 'Judging accepted successfully!',
+        type: 'success',
+      })
+
+      onClose()
     } catch (error) {
       console.error('Error accepting judging:', error)
       setError('Failed to accept judging. Please try again.')
-
+      setSnackbar({
+        open: true,
+        message: 'Error accepting judging. Please try again.',
+        type: 'error',
+      })
     } finally {
       setIsAcceptingJudging(false)
     }
@@ -108,10 +143,20 @@ const BetDetails: React.FC<BetDetailsProps> = ({
     setError(null)
     try {
       await pb.collection('bets').delete(id)
-      onClose() // Close the modal after successful deletion
+      setSnackbar({
+        open: true,
+        message: 'Bet deleted successfully!',
+        type: 'success',
+      })
+      onClose()
     } catch (error) {
       console.error('Error deleting bet:', error)
       setError('Failed to delete bet. Please try again.')
+      setSnackbar({
+        open: true,
+        message: 'Error deleting bet. Please try again.',
+        type: 'error',
+      })
     } finally {
       setIsDeleting(false)
     }
@@ -153,7 +198,6 @@ const BetDetails: React.FC<BetDetailsProps> = ({
             <span className='text-gray-400 font-light'>Odds</span>
             <span>{ods1 + ':' + ods2}</span>
           </div>
-
           <div className='flex justify-between'>
             <span className='text-gray-400 font-light'>Judge</span>
             <span>{judge}</span>
@@ -177,7 +221,6 @@ const BetDetails: React.FC<BetDetailsProps> = ({
         </div>
 
         {error && <p className='text-red-500 mt-4'>{error}</p>}
-
 
         {isOpponent && !isJudgment && !acceptedCompetitor && (
           <div className='flex justify-between mt-6 space-x-5'>
@@ -236,6 +279,21 @@ const BetDetails: React.FC<BetDetailsProps> = ({
             >
               Pick winner
             </button>
+          </div>
+        )}
+
+        {snackbar.open && (
+          <div
+            className={`fixed bottom-4 right-4 px-4 py-2 rounded-md shadow-lg flex items-center space-x-2 ${
+              snackbar.type === 'success' ? 'bg-green-500' : 'bg-red-500'
+            }`}
+          >
+            {snackbar.type === 'success' ? (
+              <CheckCircle className='text-white' size={20} />
+            ) : (
+              <XCircle className='text-white' size={20} />
+            )}
+            <p className='text-white'>{snackbar.message}</p>
           </div>
         )}
       </div>
