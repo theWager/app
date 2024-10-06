@@ -29,6 +29,7 @@ const BetDetails: React.FC<BetDetailsProps> = ({
   amount,
   judge,
   competitor,
+  creatorAddress,
   competitorAddress,
   acceptedCompetitor,
   judgeAddress,
@@ -41,13 +42,14 @@ const BetDetails: React.FC<BetDetailsProps> = ({
   const wallet = useWallet()
   const [isAccepting, setIsAccepting] = useState(false)
   const { acceptWager, acceptJudging } = useCounterProgram() // is this correct?
-
+  const [isDeleting, setIsDeleting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   if (!isOpen) return null
 
-  const isOpponent = wallet.publicKey?.toBase58() === competitorAddress
-  const isJudge = wallet.publicKey?.toBase58() == judgeAddress
+  const isCreator = wallet.publicKey?.toBase58() === creatorAddress
+  const isOpponent = (wallet.publicKey?.toBase58() === competitorAddress) || (wallet.publicKey?.toBase58() && competitorAddress === '')
+  const isJudge = wallet.publicKey?.toBase58() === judgeAddress
 
   const handleAccept = async () => {
     setIsAccepting(true)
@@ -88,6 +90,20 @@ const BetDetails: React.FC<BetDetailsProps> = ({
       setError('Failed to accept judging. Please try again.')
     } finally {
       setIsAccepting(false)
+    }
+  }
+
+  const handleDelete = async () => {
+    setIsDeleting(true)
+    setError(null)
+    try {
+      await pb.collection('bets').delete(id)
+      onClose() // Close the modal after successful deletion
+    } catch (error) {
+      console.error('Error deleting bet:', error)
+      setError('Failed to delete bet. Please try again.')
+    } finally {
+      setIsDeleting(false)
     }
   }
 
@@ -186,6 +202,16 @@ const BetDetails: React.FC<BetDetailsProps> = ({
               {isAccepting ? 'Accepting...' : 'Accept Judging'}
             </button>
           </div>
+        )}
+
+        {isCreator && !isAccepting && (
+          <button 
+            onClick={handleDelete}
+            disabled={isDeleting}
+            className='mt-6 bg-red-600/30 transition-all duration-300 hover:bg-red-700 text-red-300 rounded-lg w-full h-fit py-3 disabled:opacity-50'
+          >
+            {isDeleting ? 'Deleting...' : 'Delete Bet'}
+          </button>
         )}
 
         {isJudgment && (

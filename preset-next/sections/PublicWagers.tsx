@@ -33,7 +33,7 @@ const CategoryGridCarousel = () => {
   }
 
   return (
-    <div className='relative w-full min-h-[150px] bg-wagerBlue py-6 rounded-2xl border border-wagerBlue'>
+    <div className='relative w-full min-h-[150px] bg-wagerBlue py-6 rounded-2xl border border-wagerBlue z-[5]'>
       <h1 className='text-2xl font-bold text-white px-6 z-20 relative italic'>
         Platform Wagers
       </h1>

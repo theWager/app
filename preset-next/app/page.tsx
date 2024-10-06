@@ -21,6 +21,7 @@ export default function AllBets() {
       const storedBets = await pb
         .collection('bets')
         .getFullList<PocketBaseBet>({
+          filter: `expire_date > '${new Date().toISOString()}'`,
           sort: '-created',
         })
 

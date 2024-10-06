@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import IconButton from '@/components/ui/Button'
 import Plus from '@/assets/plus.svg'
 import Search from '@/assets/search.svg'
@@ -27,6 +27,9 @@ const AllBetsHeader: React.FC<AllBetsHeaderProps> = ({
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false)
   const [selectedBet, setSelectedBet] = useState<Bet | null>(null)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [sortCriteria, setSortCriteria] = useState<'title' | 'amount'>('title')
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
   const wallet = useWallet()
   isLoggedIn = wallet.publicKey?.toBase58().length ? true : false
 
@@ -42,6 +45,39 @@ const AllBetsHeader: React.FC<AllBetsHeaderProps> = ({
     setIsDetailsModalOpen(false)
     setSelectedBet(null)
   }
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value)
+  }
+
+  const toggleSort = () => {
+    if (sortCriteria === 'title') {
+      setSortCriteria('amount')
+    } else {
+      setSortCriteria('title')
+    }
+    setSortDirection(prev => (prev === 'asc' ? 'desc' : 'asc'))
+  }
+
+  const filteredAndSortedBets = useMemo(() => {
+    return bets
+      .filter(bet =>
+        bet.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        bet.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        bet.amount.toString().includes(searchTerm)
+      )
+      .sort((a, b) => {
+        if (sortCriteria === 'title') {
+          return sortDirection === 'asc'
+            ? a.title.localeCompare(b.title)
+            : b.title.localeCompare(a.title)
+        } else {
+          return sortDirection === 'asc'
+            ? a.amount - b.amount
+            : b.amount - a.amount
+        }
+      })
+  }, [bets, searchTerm, sortCriteria, sortDirection])
 
   return (
     <div
@@ -68,6 +104,8 @@ const AllBetsHeader: React.FC<AllBetsHeaderProps> = ({
             <input
               type='text'
               placeholder='Search'
+              value={searchTerm}
+              onChange={handleSearchChange}
               className='pl-10 pr-3 py-2 w-40 sm:w-auto rounded-lg bg-wagerBlue/20 text-white text-base font-light focus:outline-none focus:border-purple-500'
             />
             <Image
@@ -78,16 +116,17 @@ const AllBetsHeader: React.FC<AllBetsHeaderProps> = ({
           </div>
           <IconButton
             icon={Sort}
+            onClick={toggleSort}
             classes='inline-flex px-3 py-2 rounded-lg bg-wagerBlue/20 text-base font-light text-gray-400'
             href='#'
-            title='Sort'
+            title={`Sort by ${sortCriteria} (${sortDirection.toUpperCase()})`}
           />
         </div>
       </div>
 
       <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mt-6'>
-        {bets.map(bet => (
-          <BetCard {...bet} betsPage={page} />
+        {filteredAndSortedBets.map(bet => (
+          <BetCard key={bet.id} {...bet} betsPage={page} />
         ))}
       </div>
 
