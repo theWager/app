@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { X, ChevronDown, CheckCircle, XCircle } from 'lucide-react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import PocketBase from 'pocketbase'
-import { set } from '@coral-xyz/anchor/dist/cjs/utils/features'
 
 // Initialize PocketBase
 const pb = new PocketBase('https://wager.pockethost.io')
@@ -12,12 +11,17 @@ interface CreateBetModalProps {
   onClose: () => void
 }
 
+interface User {
+  address: string
+  name: string
+}
+
 const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
   const wallet = useWallet()
 
   const [formData, setFormData] = useState({
-    address_opponent: '',
-    address_judge: '',
+    opponent: '',
+    judge: '',
     category: '',
     expire_date: '',
     end_date: '',
@@ -33,12 +37,33 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
   const [showUsernameField, setShowUsernameField] = useState(false)
   const [belowUsernameText, setBelowUsernameText] = useState('')
   const [isOpenToAnyone, setIsOpenToAnyone] = useState(false)
+  const [users, setUsers] = useState<User[]>([])
+  const [userMap, setUserMap] = useState<Record<string, string>>({})
 
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: '',
     type: 'success' as 'success' | 'error',
   })
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const records = await pb.collection('users').getFullList<User>()
+        setUsers(records)
+        const map = records.reduce((map, user) => {
+          map[user.address] = user.name
+          map[user.name] = user.address
+          return map
+        }, {} as Record<string, string>)
+        setUserMap(map)
+      } catch (error) {
+        console.error('Error fetching users:', error)
+      }
+    }
+
+    fetchUsers()
+  }, [])
 
   useEffect(() => {
     const checkUser = async () => {
@@ -67,9 +92,15 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
       if (checked) {
         setFormData(prevState => ({
           ...prevState,
-          address_opponent: '',
+          opponent: '',
         }))
       }
+    } else if (type === 'datetime-local') {
+      const formattedDate = new Date(value).toISOString().slice(0, 16)
+      setFormData(prevState => ({
+        ...prevState,
+        [name]: formattedDate,
+      }))
     } else {
       setFormData(prevState => ({
         ...prevState,
@@ -80,13 +111,10 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
 
   const handleUsernameChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(e.target.value)
-
-    // Unique username must be set for participating
     try {
       const result = await pb
         .collection('users')
         .getFirstListItem(`name="${e.target.value}"`)
-
       setBelowUsernameText('Username already exists')
     } catch (error) {
       setBelowUsernameText('')
@@ -107,14 +135,19 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
         Math.random().toString(36).substring(2, 15) +
         Math.random().toString(36).substring(2, 15)
 
+      const opponentAddress = userMap[formData.opponent] || formData.opponent
+      const judgeAddress = userMap[formData.judge] || formData.judge
+
       const betData = {
         ...formData,
         bet_hash: betHash,
         accepted_opponent: false,
+        accepted_judge: false,
         end_date: new Date(formData.end_date.toString().replace(' ', 'T')),
         expire_date: new Date(formData.expire_date.toString().replace(' ', 'T')),
-        accepted_judge: false,
         address_creator: wallet.publicKey?.toBase58(),
+        address_opponent: opponentAddress,
+        address_judge: judgeAddress,
       }
 
       await pb.collection('bets').create(betData)
@@ -156,11 +189,12 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
           <h2 className='text-2xl font-bold text-teal-400'>Create Wager</h2>
           <button
             onClick={onClose}
-            className='text-gray-400  transition-all duration-300 hover:text-white'
+            className='text-gray-400 transition-all duration-300 hover:text-white'
           >
             <X size={24} />
           </button>
         </div>
+
 
         <form className='space-y-4' onSubmit={handleSubmit}>
           {showUsernameField && (
@@ -302,27 +336,8 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
             </div>
           </div>
 
-          <div>
-            <label
-              htmlFor='address_opponent'
-              className='block text-sm font-medium text-teal-400 mb-1'
-            >
-              Opponent Address
-            </label>
-            <input
-              type='text'
-              id='address_opponent'
-              name='address_opponent'
-              value={formData.address_opponent}
-              onChange={handleInputChange}
-              placeholder='Type Opponent Address'
-              className='w-full bg-gray-800 rounded px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500'
-              disabled={isOpenToAnyone}
-            />
-          </div>
-
           <div className="flex items-center">
-          <input
+            <input
               type="checkbox"
               id="openToAnyone"
               name="openToAnyone"
@@ -331,26 +346,60 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
               className="form-checkbox h-5 w-5 text-teal-400 bg-gray-800 border-gray-600 rounded focus:ring-2 focus:ring-teal-400 focus:ring-opacity-50 checked:bg-teal-400 checked:border-transparent cursor-pointer"
             />
             <label htmlFor="openToAnyone" className="ml-2 text-sm font-medium text-teal-400 cursor-pointer">
-              Wager against anyone on theWager
+              Bet open to anyone
             </label>
           </div>
 
+          {!isOpenToAnyone && (
+            <div>
+              <label
+                htmlFor='opponent'
+                className='block text-sm font-medium text-teal-400 mb-1'
+              >
+                Opponent (username or address)
+              </label>
+              <input
+                list="opponentList"
+                id='opponent'
+                name='opponent'
+                value={formData.opponent}
+                onChange={handleInputChange}
+                placeholder='Enter username or address'
+                className='w-full bg-gray-800 rounded px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500'
+              />
+              <datalist id="opponentList">
+                {users.map(user => (
+                  <option key={user.address} value={user.name}>
+                    {user.address}
+                  </option>
+                ))}
+              </datalist>
+            </div>
+          )}
+
           <div>
             <label
-              htmlFor='address_judge'
+              htmlFor='judge'
               className='block text-sm font-medium text-teal-400 mb-1'
             >
-              Judge Address
+              Judge (username or address)
             </label>
             <input
-              type='text'
-              id='address_judge'
-              name='address_judge'
-              value={formData.address_judge}
+              list="judgeList"
+              id='judge'
+              name='judge'
+              value={formData.judge}
               onChange={handleInputChange}
-              placeholder='Type Judge Address'
+              placeholder='Enter username or address'
               className='w-full bg-gray-800 rounded px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500'
             />
+            <datalist id="judgeList">
+              {users.map(user => (
+                <option key={user.address} value={user.name}>
+                  {user.address}
+                </option>
+              ))}
+            </datalist>
           </div>
 
           <div>
@@ -390,32 +439,34 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
             <button
               type='button'
               onClick={onClose}
-              className='flex-1 px-4 py-2 bg-gray-800 text-white rounded  transition-all duration-300 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-600'
+              className='flex-1 px-4 py-2 bg-gray-800 text-white rounded transition-all duration-300 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-600'
             >
               Cancel
             </button>
             <button
               type='submit'
-              className='flex-1 px-4 py-2 bg-purple-600 text-white rounded  transition-all duration-300 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500'
+              className='flex-1 px-4 py-2 bg-purple-600 text-white rounded transition-all duration-300 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500'
             >
               Create Wager
             </button>
           </div>
         </form>
-      </div>
-      {snackbar.open && (
-        <div
-          className={`fixed bottom-4 right-4 px-4 py-2 rounded-md shadow-lg flex items-center space-x-2 ${snackbar.type === 'success' ? 'bg-green-500' : 'bg-red-500'
+
+        {snackbar.open && (
+          <div
+            className={`fixed bottom-4 right-4 px-4 py-2 rounded-md shadow-lg flex items-center space-x-2 ${
+              snackbar.type === 'success' ? 'bg-green-500' : 'bg-red-500'
             }`}
-        >
-          {snackbar.type === 'success' ? (
-            <CheckCircle className='text-white' size={20} />
-          ) : (
-            <XCircle className='text-white' size={20} />
-          )}
-          <p className='text-white'>{snackbar.message}</p>
-        </div>
-      )}
+          >
+            {snackbar.type === 'success' ? (
+              <CheckCircle className='text-white' size={20} />
+            ) : (
+              <XCircle className='text-white' size={20} />
+            )}
+            <p className='text-white'>{snackbar.message}</p>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
