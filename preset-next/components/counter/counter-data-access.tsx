@@ -3,7 +3,7 @@
 import { getWagerProgram, getWagerProgramId } from '../../blockchain/src'
 import { BN, Program, web3 } from '@coral-xyz/anchor'
 import { useConnection } from '@solana/wallet-adapter-react'
-import { Cluster, Keypair, PublicKey } from '@solana/web3.js'
+import { Cluster, Keypair, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import toast from 'react-hot-toast'
@@ -16,7 +16,7 @@ const pb = new Pocketbase('https://wager.pockethost.io')
 
 interface CreateWagerArgs {
   wagerId: BN
-  opponentAddress: PublicKey
+  opponentAddress: PublicKey | null
   judgeAddress: PublicKey
   wagerAmount: BN
   expirationDate: BN
@@ -30,6 +30,9 @@ interface AcceptWagerArgs {
   wagerId: BN
   wagerInitiator: PublicKey
   opponent: PublicKey
+  wagerAmount: number
+  odds1: number
+  odds2: number
 }
 
 interface AcceptJudgingArgs {
@@ -99,6 +102,13 @@ export function useCounterProgram() {
         program.programId,
       )
 
+      // Send some lamports to the opponent account from the wallet
+      const transferInstruction =  web3.SystemProgram.transfer({
+        fromPubkey: wagerInitiator,
+        toPubkey: wagerPda,
+        lamports: wagerAmount.toNumber(),
+      });
+
       return program.methods
         .createWager(
           wagerId,
@@ -116,6 +126,7 @@ export function useCounterProgram() {
           user: wagerInitiator,
           systemProgram: web3.SystemProgram.programId,
         })
+        .preInstructions([transferInstruction])
         .rpc()
     },
     onSuccess: signature => {
@@ -124,13 +135,13 @@ export function useCounterProgram() {
     },
     onError: error => {
       console.error(error.message)
-      toast.error('Failed to initialize account')
+      toast.error('Failed to create wager')
     },
   })
 
   const acceptWager = useMutation<string, Error, AcceptWagerArgs>({
     mutationKey: ['the_wager_program', 'acceptWager', { cluster }],
-    mutationFn: async ({ wagerId, wagerInitiator, opponent }) => {
+    mutationFn: async ({ wagerId, wagerInitiator, opponent, wagerAmount, odds1, odds2 }) => {
       // Calculate the PDA for the wager account
       const [wagerPda] = PublicKey.findProgramAddressSync(
         [
@@ -141,12 +152,20 @@ export function useCounterProgram() {
         program.programId,
       )
 
+      // Send some lamports to the opponent account from the wallet
+      const transferInstruction =  web3.SystemProgram.transfer({
+        fromPubkey: wagerInitiator,
+        toPubkey: wagerPda,
+        lamports: wagerAmount * odds2 * LAMPORTS_PER_SOL / odds1,
+      });
+
       return program.methods
         .acceptWager()
         .accounts({
           user: opponent,
           wager: wagerPda,
         })
+        .preInstructions([transferInstruction])
         .rpc()
     },
     onSuccess: tx => {

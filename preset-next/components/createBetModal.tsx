@@ -5,7 +5,7 @@ import PocketBase from 'pocketbase'
 import { set } from '@coral-xyz/anchor/dist/cjs/utils/features'
 import { useCounterProgram } from './counter/counter-data-access'
 import { BN } from '@coral-xyz/anchor'
-import { PublicKey } from '@solana/web3.js'
+import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
 
 // Initialize PocketBase
 const pb = new PocketBase('https://wager.pockethost.io')
@@ -19,7 +19,7 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
   const wallet = useWallet()
   const { createWager } = useCounterProgram()
 
-  const [formData, setFormData] = useState({
+  const initialFormData = {
     address_opponent: '',
     address_judge: '',
     category: '',
@@ -31,12 +31,16 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
     odd_opponent: '',
     amount: '',
     judge_fee: '',
-  })
+  }
+
+  const [formData, setFormData] = useState(initialFormData)
 
   const [username, setUsername] = useState('')
   const [showUsernameField, setShowUsernameField] = useState(false)
   const [belowUsernameText, setBelowUsernameText] = useState('')
   const [isOpenToAnyone, setIsOpenToAnyone] = useState(false)
+  const [solanaPrice, setSolanaPrice] = useState<number | null>(null)
+  const [isCreatingWager, setIsCreatingWager] = useState(false)
 
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -45,6 +49,18 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
   })
 
   useEffect(() => {
+
+    const fetchSolanaPrice = async () => {
+      try {
+        const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd');
+        const data = await response.json()
+        setSolanaPrice(data.solana.usd);
+  
+      } catch (err) {
+        console.error('Error fetching Solana price: ', err)
+      }
+    }
+
     const checkUser = async () => {
       if (wallet.publicKey) {
         try {
@@ -59,6 +75,8 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
     }
 
     checkUser()
+    fetchSolanaPrice()
+
   }, [wallet.publicKey])
 
   const handleInputChange = (
@@ -98,6 +116,7 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
+    setIsCreatingWager(true)
     e.preventDefault()
     try {
       if (showUsernameField && username) {
@@ -116,7 +135,7 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
       let wagerIdBN
       try {
         const records = await pb.collection('bets').getFullList()
-        wagerId = records.length + 1
+        wagerId = records.length + 25
         wagerIdBN = new BN(wagerId)
       } catch (error) {
         wagerId = Math.random()*10000
@@ -134,26 +153,22 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
         wager_chain_id: wagerId,
       }
 
-      // Set expiration and end dates
-      const now = Math.floor(Date.now() / 1000);
-      const expirationDate = new BN(now + 3600); // 1 hour from now
-      const endDate = new BN(now + 7200); // 2 hours from now
-
       // Create a create-wager transaction here
-      // TODO: Add transfer of solana tokens
-      createWager.mutateAsync({
+      await createWager.mutateAsync({
         wagerId: wagerIdBN, 
-        opponentAddress: new PublicKey(formData.address_opponent), 
+        opponentAddress: isOpenToAnyone ? null : new PublicKey(formData.address_opponent), 
         judgeAddress: new PublicKey(formData.address_judge), 
-        wagerAmount: new BN(formData.amount), 
-        expirationDate, 
-        endDate, 
+        wagerAmount: new BN(parseFloat(betData.amount) * LAMPORTS_PER_SOL), 
+        expirationDate: new BN(betData.expire_date.getTime()), 
+        endDate: new BN(betData.end_date.getTime()), 
         oddsNumerator: parseInt(formData.odd_created), 
         oddsDenominator: parseInt(formData.odd_opponent), 
         wagerInitiator: new PublicKey(wallet.publicKey as PublicKey)
       })
 
       await pb.collection('bets').create(betData)
+
+      setFormData(initialFormData)
 
       setSnackbar({
         open: true,
@@ -171,6 +186,7 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
         type: 'error',
       })
     }
+    setIsCreatingWager(false)
   }
 
   useEffect(() => {
@@ -306,6 +322,11 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
                   SOL
                 </span>
               </div>
+              {solanaPrice && (
+                <span className='text-xs text-gray-400 mt-1'>
+                  1 SOL = ${solanaPrice.toFixed(2)} USD
+                </span>
+              )}
             </div>
             <div className='flex-1'>
               <label
@@ -432,10 +453,11 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
             </button>
             <button
               type='submit'
+              disabled={isCreatingWager}
               className='flex-1 px-4 py-2 bg-purple-600 text-white rounded  transition-all duration-300 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500'
             >
-              Create Wager
-            </button>
+              {isCreatingWager ? 'Creating Wager...' : 'Create Wager'}
+              </button>
           </div>
         </form>
       </div>

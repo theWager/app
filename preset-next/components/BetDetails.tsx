@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Bet } from '@/util/Types'
 import StatusCrumb from './ui/Status'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -6,6 +6,7 @@ import PocketBase from 'pocketbase'
 import { useCounterProgram, useCounterProgramAccount } from './counter/counter-data-access'
 import { Keypair, PublicKey } from '@solana/web3.js'
 import { BN } from '@coral-xyz/anchor'
+import { CheckCircle, XCircle } from 'lucide-react'
 
 // Initialize PocketBase
 const pb = new PocketBase('https://wager.pockethost.io')
@@ -28,6 +29,7 @@ const BetDetails: React.FC<BetDetailsProps> = ({
   ods2,
   amount,
   judge,
+  chainId,
   competitor,
   creatorAddress,
   competitorAddress,
@@ -40,10 +42,26 @@ const BetDetails: React.FC<BetDetailsProps> = ({
   openWinnerModal,
 }) => {
   const wallet = useWallet()
-  const [isAccepting, setIsAccepting] = useState(false)
+  const [isAcceptingBet, setIsAcceptingBet] = useState(false)
+  const [isAcceptingJudging, setIsAcceptingJudging] = useState(false)
   const { acceptWager, acceptJudging } = useCounterProgram() // is this correct?
   const [isDeleting, setIsDeleting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    type: 'success' as 'success' | 'error',
+  })
+
+  useEffect(() => {
+    if (snackbar.open) {
+      const timer = setTimeout(() => {
+        setSnackbar(prev => ({ ...prev, open: false }))
+      }, 5000)
+
+      return () => clearTimeout(timer)
+    }
+  }, [snackbar.open])
 
   if (!isOpen) return null
 
@@ -52,44 +70,67 @@ const BetDetails: React.FC<BetDetailsProps> = ({
   const isJudge = wallet.publicKey?.toBase58() === judgeAddress
 
   const handleAccept = async () => {
-    setIsAccepting(true)
+    setIsAcceptingBet(true)
     setError(null)
     
     try {
-      
-      acceptWager.mutateAsync({
-        wagerId: new BN(123), // This should be the wager_chain_id in database
-        wagerInitiator: new PublicKey(competitorAddress), // This should be the user who started the bet
-        opponent: wallet.publicKey!
+
+      await acceptWager.mutateAsync({
+        wagerId: new BN(chainId),
+        wagerInitiator: new PublicKey(creatorAddress),
+        opponent: wallet.publicKey!,
+        wagerAmount: amount,
+        odds1: ods1,
+        odds2: ods2,
       })
 
-      // await pb.collection('bets').update(id, { accepted_opponent: true })
+      await pb.collection('bets').update(id, { accepted_opponent: true })
+      setSnackbar({
+        open: true,
+        message: 'Wager accepted successfully!',
+        type: 'success',
+      })
       onClose() // Close the modal after successful update
     } catch (error) {
       console.error('Error accepting bet:', error)
       setError('Failed to accept bet. Please try again.')
+      setSnackbar({
+        open: true,
+        message: 'Error accepting wager. Please try again.',
+        type: 'error',
+      })
     } finally {
-      setIsAccepting(false)
+      setIsAcceptingBet(false)
     }
   }
 
   const handleJudgeAccept = async () => {
-    setIsAccepting(true)
+    setIsAcceptingJudging(true)
     setError(null)
     try {
-      acceptJudging.mutateAsync({
-        wagerId: new BN(123), // This should be the wager_chain_id in database
-        wagerInitiator: new PublicKey(competitorAddress), // This should be the user who started the bet
+      await acceptJudging.mutateAsync({
+        wagerId: new BN(chainId),
+        wagerInitiator: new PublicKey(creatorAddress),
         judge: wallet.publicKey!
       })
 
-      // await pb.collection('bets').update(id, { accepted_judge: true })
+      await pb.collection('bets').update(id, { accepted_judge: true })
+      setSnackbar({
+        open: true,
+        message: 'Judging accepted successfully!',
+        type: 'success',
+      })
       onClose() // Close the modal after successful update
     } catch (error) {
       console.error('Error accepting judging:', error)
       setError('Failed to accept judging. Please try again.')
+      setSnackbar({
+        open: true,
+        message: 'Error accepting judging. Please try again.',
+        type: 'error',
+      })
     } finally {
-      setIsAccepting(false)
+      setIsAcceptingJudging(false)
     }
   }
 
@@ -178,10 +219,10 @@ const BetDetails: React.FC<BetDetailsProps> = ({
             </button>
             <button
               onClick={handleAccept}
-              disabled={isAccepting}
+              disabled={isAcceptingBet}
               className='bg-green-600/30  transition-all duration-300 hover:bg-green-700 text-green-300 rounded-lg w-full h-fit py-3 disabled:opacity-50'
             >
-              {isAccepting ? 'Accepting...' : 'Accept Bet'}
+              {isAcceptingBet ? 'Accepting...' : 'Accept Bet'}
             </button>
           </div>
         )}
@@ -196,15 +237,15 @@ const BetDetails: React.FC<BetDetailsProps> = ({
             </button>
             <button
               onClick={handleJudgeAccept}
-              disabled={isAccepting}
+              disabled={isAcceptingJudging}
               className='bg-green-600/30  transition-all duration-300 hover:bg-green-700 text-green-300 rounded-lg w-full h-fit py-3 disabled:opacity-50'
             >
-              {isAccepting ? 'Accepting...' : 'Accept Judging'}
+              {isAcceptingJudging ? 'Accepting...' : 'Accept Judging'}
             </button>
           </div>
         )}
 
-        {isCreator && !isAccepting && (
+        {isCreator && !isAcceptingJudging && (
           <button 
             onClick={handleDelete}
             disabled={isDeleting}
@@ -228,6 +269,19 @@ const BetDetails: React.FC<BetDetailsProps> = ({
           </div>
         )}
       </div>
+      {snackbar.open && (
+        <div
+          className={`fixed bottom-4 right-4 px-4 py-2 rounded-md shadow-lg flex items-center space-x-2 ${snackbar.type === 'success' ? 'bg-green-500' : 'bg-red-500'
+            }`}
+        >
+          {snackbar.type === 'success' ? (
+            <CheckCircle className='text-white' size={20} />
+          ) : (
+            <XCircle className='text-white' size={20} />
+          )}
+          <p className='text-white'>{snackbar.message}</p>
+        </div>
+      )}
     </div>
   )
 }
