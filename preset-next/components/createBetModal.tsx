@@ -25,8 +25,8 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
   const { createWager } = useCounterProgram()
 
   const initialFormData = {
-    address_opponent: '',
-    address_judge: '',
+    opponent: '',
+    judge: '',
     category: '',
     expire_date: '',
     end_date: '',
@@ -163,14 +163,14 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
       let wagerIdBN
       try {
         const records = await pb.collection('bets').getFullList()
-        wagerId = records.length + 25
+        wagerId = records.length + 70
         wagerIdBN = new BN(wagerId)
       } catch (error) {
         wagerId = Math.random()*10000
         wagerIdBN = new BN(wagerId)
       }
-      const opponentAddress = userMap[formData.address_opponent] || formData.address_opponent
-      const judgeAddress = userMap[formData.address_judge] || formData.address_judge
+      const opponentAddress = userMap[formData.opponent] || formData.opponent
+      const judgeAddress = userMap[formData.judge] || formData.judge
 
       const betData = {
         ...formData,
@@ -182,14 +182,14 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
         address_creator: wallet.publicKey?.toBase58(),
         wager_chain_id: wagerId,
         address_opponent: opponentAddress,
-        address_judge: judgeAddress,
+        address_judge: judgeAddress //"7PoGvrdKgtLqQonR15usfrW54QquXXKXSsyJ944heMoE",
       }
 
       // Create a create-wager transaction here
       await createWager.mutateAsync({
         wagerId: wagerIdBN, 
-        opponentAddress: isOpenToAnyone ? null : new PublicKey(formData.address_opponent), 
-        judgeAddress: new PublicKey(formData.address_judge), 
+        opponentAddress: isOpenToAnyone ? null : new PublicKey(formData.opponent), 
+        judgeAddress: new PublicKey(judgeAddress), //"7PoGvrdKgtLqQonR15usfrW54QquXXKXSsyJ944heMoE",
         wagerAmount: new BN(parseFloat(betData.amount) * LAMPORTS_PER_SOL), 
         expirationDate: new BN(betData.expire_date.getTime()), 
         endDate: new BN(betData.end_date.getTime()), 
@@ -418,7 +418,7 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
                 list="opponentList"
                 id='opponent'
                 name='opponent'
-                value={formData.address_opponent}
+                value={formData.opponent}
                 onChange={handleInputChange}
                 placeholder='Enter username or address'
                 className='w-full bg-gray-800 rounded px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500'
@@ -444,7 +444,7 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
               list="judgeList"
               id='judge'
               name='judge'
-              value={formData.address_judge}
+              value={formData.judge}
               onChange={handleInputChange}
               placeholder='Enter username or address'
               className='w-full bg-gray-800 rounded px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500'

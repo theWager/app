@@ -47,21 +47,6 @@ const BetDetails: React.FC<BetDetailsProps> = ({
   const { acceptWager, acceptJudging } = useCounterProgram() // is this correct?
   const [isDeleting, setIsDeleting] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [snackbar, setSnackbar] = useState({
-    open: false,
-    message: '',
-    type: 'success' as 'success' | 'error',
-  })
-
-  useEffect(() => {
-    if (snackbar.open) {
-      const timer = setTimeout(() => {
-        setSnackbar(prev => ({ ...prev, open: false }))
-      }, 5000)
-
-      return () => clearTimeout(timer)
-    }
-  }, [snackbar.open])
 
   if (!isOpen) return null
 
@@ -85,20 +70,12 @@ const BetDetails: React.FC<BetDetailsProps> = ({
       })
 
       await pb.collection('bets').update(id, { accepted_opponent: true })
-      setSnackbar({
-        open: true,
-        message: 'Wager accepted successfully!',
-        type: 'success',
-      })
+
       onClose() // Close the modal after successful update
     } catch (error) {
       console.error('Error accepting bet:', error)
       setError('Failed to accept bet. Please try again.')
-      setSnackbar({
-        open: true,
-        message: 'Error accepting wager. Please try again.',
-        type: 'error',
-      })
+
     } finally {
       setIsAcceptingBet(false)
     }
@@ -115,20 +92,12 @@ const BetDetails: React.FC<BetDetailsProps> = ({
       })
 
       await pb.collection('bets').update(id, { accepted_judge: true })
-      setSnackbar({
-        open: true,
-        message: 'Judging accepted successfully!',
-        type: 'success',
-      })
+
       onClose() // Close the modal after successful update
     } catch (error) {
       console.error('Error accepting judging:', error)
       setError('Failed to accept judging. Please try again.')
-      setSnackbar({
-        open: true,
-        message: 'Error accepting judging. Please try again.',
-        type: 'error',
-      })
+
     } finally {
       setIsAcceptingJudging(false)
     }
@@ -209,6 +178,7 @@ const BetDetails: React.FC<BetDetailsProps> = ({
 
         {error && <p className='text-red-500 mt-4'>{error}</p>}
 
+
         {isOpponent && !isJudgment && !acceptedCompetitor && (
           <div className='flex justify-between mt-6 space-x-5'>
             <button
@@ -269,19 +239,6 @@ const BetDetails: React.FC<BetDetailsProps> = ({
           </div>
         )}
       </div>
-      {snackbar.open && (
-        <div
-          className={`fixed bottom-4 right-4 px-4 py-2 rounded-md shadow-lg flex items-center space-x-2 ${snackbar.type === 'success' ? 'bg-green-500' : 'bg-red-500'
-            }`}
-        >
-          {snackbar.type === 'success' ? (
-            <CheckCircle className='text-white' size={20} />
-          ) : (
-            <XCircle className='text-white' size={20} />
-          )}
-          <p className='text-white'>{snackbar.message}</p>
-        </div>
-      )}
     </div>
   )
 }
