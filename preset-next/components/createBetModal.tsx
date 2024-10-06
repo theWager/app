@@ -73,7 +73,6 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
         const records = await pb.collection('users').getFullList<User>()
         setUsers(records)
         const map = records.reduce((map, user) => {
-          map[user.address] = user.name
           map[user.name] = user.address
           return map
         }, {} as Record<string, string>)
@@ -169,8 +168,13 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
         wagerId = Math.random()*10000
         wagerIdBN = new BN(wagerId)
       }
+
+      console.log(formData.judge)
+
       const opponentAddress = userMap[formData.opponent] || formData.opponent
       const judgeAddress = userMap[formData.judge] || formData.judge
+
+      console.log(judgeAddress)
 
       const betData = {
         ...formData,
