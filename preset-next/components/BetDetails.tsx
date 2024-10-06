@@ -67,13 +67,15 @@ const BetDetails: React.FC<BetDetailsProps> = ({
   if (!isOpen) return null
 
   const isCreator = wallet.publicKey?.toBase58() === creatorAddress
-  const isOpponent = (wallet.publicKey?.toBase58() === competitorAddress) || (wallet.publicKey?.toBase58() && competitorAddress === '')
+  const isOpponent =
+    wallet.publicKey?.toBase58() === competitorAddress ||
+    (wallet.publicKey?.toBase58() && competitorAddress === '')
   const isJudge = wallet.publicKey?.toBase58() === judgeAddress
 
   const handleAccept = async () => {
     setIsAcceptingBet(true)
     setError(null)
-    
+
     try {
       await acceptWager.mutateAsync({
         wagerId: new BN(chainId),
@@ -92,7 +94,9 @@ const BetDetails: React.FC<BetDetailsProps> = ({
         type: 'success',
       })
 
-      onClose()
+      setTimeout(() => {
+        onClose()
+      }, 1950)
     } catch (error) {
       console.error('Error accepting bet:', error)
       setError('Failed to accept bet. Please try again.')
@@ -113,7 +117,7 @@ const BetDetails: React.FC<BetDetailsProps> = ({
       await acceptJudging.mutateAsync({
         wagerId: new BN(chainId),
         wagerInitiator: new PublicKey(creatorAddress),
-        judge: wallet.publicKey!
+        judge: wallet.publicKey!,
       })
 
       await pb.collection('bets').update(id, { accepted_judge: true })
@@ -124,7 +128,9 @@ const BetDetails: React.FC<BetDetailsProps> = ({
         type: 'success',
       })
 
-      onClose()
+      setTimeout(() => {
+        onClose()
+      }, 1950)
     } catch (error) {
       console.error('Error accepting judging:', error)
       setError('Failed to accept judging. Please try again.')
@@ -148,7 +154,9 @@ const BetDetails: React.FC<BetDetailsProps> = ({
         message: 'Bet deleted successfully!',
         type: 'success',
       })
-      onClose()
+      setTimeout(() => {
+        onClose()
+      }, 1950)
     } catch (error) {
       console.error('Error deleting bet:', error)
       setError('Failed to delete bet. Please try again.')
@@ -259,7 +267,7 @@ const BetDetails: React.FC<BetDetailsProps> = ({
         )}
 
         {isCreator && !isAcceptingJudging && (
-          <button 
+          <button
             onClick={handleDelete}
             disabled={isDeleting}
             className='mt-6 bg-red-600/30 transition-all duration-300 hover:bg-red-700 text-red-300 rounded-lg w-full h-fit py-3 disabled:opacity-50'
