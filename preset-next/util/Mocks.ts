@@ -1,7 +1,6 @@
 import { BinaryBet, Bet } from './Types'
 import { BetState } from './Enums'
 
-/*
 export const MOCK_BINARY_BETS: BinaryBet[] = [
   {
     id: '1',
@@ -81,7 +80,9 @@ export const MOCK_BETS: Bet[] = [
     id: '1',
     title: 'Will it snow tomorrow?',
     description: 'Place your bet on whether it will snow tomorrow.',
+    creatorAddress: 'JohnDoe',
     createdBy: 'JohnDoe',
+    chainId: 1,
     competitor: 'AvaAnderson',
     judge: 'JaneSmith',
     ods1: 2.5,
@@ -99,7 +100,9 @@ export const MOCK_BETS: Bet[] = [
     id: '2',
     title: 'Who will win the NBA finals?',
     description: 'Place your bet on which team will win the NBA finals.',
-    createdBy: 'AliceJohnson',
+    creatorAddress: 'JohnDoe',
+    createdBy: 'JohnDoe',
+    chainId: 1,
     competitor: 'AvaAnderson',
     judge: 'BobSmith',
     ods1: 1.9,
@@ -117,8 +120,10 @@ export const MOCK_BETS: Bet[] = [
     title: 'Will the stock market go up next week?',
     description:
       'Place your bet on whether the stock market will go up next week.',
-    createdBy: 'EmilyBrown',
-    competitor: 'AvaAnderson',
+      creatorAddress: 'JohnDoe',
+      createdBy: 'JohnDoe',
+      chainId: 1,
+      competitor: 'AvaAnderson',
     judge: 'DavidWilson',
     ods1: 1.5,
     ods2: 2.8,
@@ -135,8 +140,10 @@ export const MOCK_BETS: Bet[] = [
     title: 'Will the new movie be a box office hit?',
     description:
       'Place your bet on whether the new movie will be a box office hit.',
-    createdBy: 'MichaelDavis',
-    competitor: 'AvaAnderson',
+      creatorAddress: 'JohnDoe',
+      createdBy: 'JohnDoe',
+      chainId: 1,
+      competitor: 'AvaAnderson',
     judge: 'SarahMiller',
     ods1: 3.0,
     ods2: 1.2,
@@ -153,8 +160,10 @@ export const MOCK_BETS: Bet[] = [
     title: 'Will the cryptocurrency market crash?',
     description:
       'Place your bet on whether the cryptocurrency market will crash.',
-    createdBy: 'RobertTaylor',
-    competitor: 'AvaAnderson',
+      creatorAddress: 'JohnDoe',
+      createdBy: 'JohnDoe',
+      chainId: 1,
+      competitor: 'AvaAnderson',
     judge: 'JenniferAnderson',
     ods1: 2.0,
     ods2: 1.5,
@@ -171,8 +180,10 @@ export const MOCK_BETS: Bet[] = [
     title: 'Will the next iPhone have a foldable display?',
     description:
       'Place your bet on whether the next iPhone will have a foldable display.',
-    createdBy: 'DanielClark',
-    competitor: 'AvaAnderson',
+      creatorAddress: 'JohnDoe',
+      createdBy: 'JohnDoe',
+      chainId: 1,
+      competitor: 'AvaAnderson',
     judge: 'LauraWhite',
     ods1: 1.7,
     ods2: 2.3,
@@ -182,78 +193,5 @@ export const MOCK_BETS: Bet[] = [
     acceptedCompetitor: true,
     acceptedJudge: true,
     judgeAddress: "b"
-  },
-  {
-    state: BetState.ACTIVE,
-    id: '7',
-    title: 'Will the next World Cup be held in Europe?',
-    description:
-      'Place your bet on whether the next World Cup will be held in Europe.',
-    createdBy: 'MatthewLee',
-    competitor: 'AvaAnderson',
-    judge: 'EmmaTaylor',
-    ods1: 1.3,
-    ods2: 3.5,
-    amount: 500,
-    createdDate: new Date('2022-07-01'),
-    expirationDate: new Date('2022-07-08'), competitorAddress: 'a',
-    acceptedCompetitor: true,
-    acceptedJudge: true,
-    judgeAddress: "b"
-  },
-  {
-    state: BetState.ACTIVE,
-    id: '8',
-    title: 'Will the next US president be a woman?',
-    description:
-      'Place your bet on whether the next US president will be a woman.',
-    createdBy: 'JamesBrown',
-    competitor: 'AvaAnderson',
-    judge: 'OliviaJohnson',
-    ods1: 2.8,
-    ods2: 1.5,
-    amount: 1000,
-    createdDate: new Date('2022-08-01'),
-    expirationDate: new Date('2022-08-02'), competitorAddress: 'a',
-    acceptedCompetitor: true,
-    acceptedJudge: true,
-    judgeAddress: "b"
-  },
-  {
-    state: BetState.ACTIVE,
-    id: '9',
-    title: 'Will the next Olympic Games be held in Asia?',
-    description:
-      'Place your bet on whether the next Olympic Games will be held in Asia.',
-    createdBy: 'SophiaWilson',
-    competitor: 'AvaAnderson',
-    judge: 'NoahDavis',
-    ods1: 1.5,
-    ods2: 2.8,
-    amount: 200,
-    createdDate: new Date('2022-09-01'),
-    expirationDate: new Date('2022-09-08'), competitorAddress: 'a',
-    acceptedCompetitor: true,
-    acceptedJudge: true,
-    judgeAddress: "b"
-  },
-  {
-    state: BetState.ACTIVE,
-    id: '10',
-    title: 'Will the next Marvel movie break box office records?',
-    description:
-      'Place your bet on whether the next Marvel movie will break box office records.',
-    createdBy: 'AvaAnderson',
-    competitor: 'AvaAnderson',
-    judge: 'WilliamSmith',
-    ods1: 1.2,
-    ods2: 3.0,
-    amount: 100,
-    createdDate: new Date('2022-10-01'),
-    expirationDate: new Date('2022-10-02'), competitorAddress: 'a',
-    acceptedCompetitor: true,
-    acceptedJudge: true,
-    judgeAddress: "b"
-  },
+  }
 ]
-*/
