@@ -14,6 +14,7 @@ export type PocketBaseBet = {
   description: string
   title: string
   odd_created: number
+  wager_chain_id: number
   odd_opponent: number
   amount: number
   accepted_opponent: boolean

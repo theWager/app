@@ -26,6 +26,7 @@ const BetDetails: React.FC<BetDetailsProps> = ({
   amount,
   judge,
   competitor,
+  creatorAddress,
   competitorAddress,
   acceptedCompetitor,
   judgeAddress,
@@ -37,19 +38,20 @@ const BetDetails: React.FC<BetDetailsProps> = ({
 }) => {
   const wallet = useWallet()
   const [isAccepting, setIsAccepting] = useState(false)
-
+  const [isDeleting, setIsDeleting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   if (!isOpen) return null
 
+  const isCreator = wallet.publicKey?.toBase58() === creatorAddress
   const isOpponent = (wallet.publicKey?.toBase58() === competitorAddress) || (wallet.publicKey?.toBase58() && competitorAddress === '')
-  const isJudge = wallet.publicKey?.toBase58() == judgeAddress
+  const isJudge = wallet.publicKey?.toBase58() === judgeAddress
 
   const handleAccept = async () => {
     setIsAccepting(true)
     setError(null)
     try {
-      await pb.collection('bets').update(id, { accepted_opponent: true, address_opponent:  wallet.publicKey?.toBase58()})
+      await pb.collection('bets').update(id, { accepted_opponent: true, address_opponent: wallet.publicKey?.toBase58() })
       onClose() // Close the modal after successful update
     } catch (error) {
       console.error('Error accepting bet:', error)
@@ -70,6 +72,20 @@ const BetDetails: React.FC<BetDetailsProps> = ({
       setError('Failed to accept judging. Please try again.')
     } finally {
       setIsAccepting(false)
+    }
+  }
+
+  const handleDelete = async () => {
+    setIsDeleting(true)
+    setError(null)
+    try {
+      await pb.collection('bets').delete(id)
+      onClose() // Close the modal after successful deletion
+    } catch (error) {
+      console.error('Error deleting bet:', error)
+      setError('Failed to delete bet. Please try again.')
+    } finally {
+      setIsDeleting(false)
     }
   }
 
@@ -168,6 +184,16 @@ const BetDetails: React.FC<BetDetailsProps> = ({
               {isAccepting ? 'Accepting...' : 'Accept Judging'}
             </button>
           </div>
+        )}
+
+        {isCreator && !isAccepting && (
+          <button 
+            onClick={handleDelete}
+            disabled={isDeleting}
+            className='mt-6 bg-red-600/30 transition-all duration-300 hover:bg-red-700 text-red-300 rounded-lg w-full h-fit py-3 disabled:opacity-50'
+          >
+            {isDeleting ? 'Deleting...' : 'Delete Bet'}
+          </button>
         )}
 
         {isJudgment && (
