@@ -1,11 +1,16 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Bet } from '@/util/Types'
 import StatusCrumb from './ui/Status'
 import { useWallet } from '@solana/wallet-adapter-react'
 import PocketBase from 'pocketbase'
+import { useCounterProgram } from './counter/counter-data-access'
+import { PublicKey } from '@solana/web3.js'
+import { BN } from '@coral-xyz/anchor'
+import { CheckCircle, XCircle } from 'lucide-react'
 
 // Initialize PocketBase
 const pb = new PocketBase('https://wager.pockethost.io')
+
 type BetDetailsProps = Bet & {
   isJudgment: boolean
   isOpen: boolean
@@ -25,7 +30,9 @@ const BetDetails: React.FC<BetDetailsProps> = ({
   ods2,
   amount,
   judge,
+  chainId,
   competitor,
+  creatorAddress,
   competitorAddress,
   acceptedCompetitor,
   judgeAddress,
@@ -36,40 +43,130 @@ const BetDetails: React.FC<BetDetailsProps> = ({
   openWinnerModal,
 }) => {
   const wallet = useWallet()
-  const [isAccepting, setIsAccepting] = useState(false)
-
+  const [isAcceptingBet, setIsAcceptingBet] = useState(false)
+  const [isAcceptingJudging, setIsAcceptingJudging] = useState(false)
+  const { acceptWager, acceptJudging } = useCounterProgram()
+  const [isDeleting, setIsDeleting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    type: 'success' as 'success' | 'error',
+  })
+
+  useEffect(() => {
+    if (snackbar.open) {
+      const timer = setTimeout(() => {
+        setSnackbar(prev => ({ ...prev, open: false }))
+      }, 5000)
+
+      return () => clearTimeout(timer)
+    }
+  }, [snackbar.open])
 
   if (!isOpen) return null
 
-  const isOpponent = wallet.publicKey?.toBase58() === competitorAddress
-  const isJudge = wallet.publicKey?.toBase58() == judgeAddress
+  const isCreator = wallet.publicKey?.toBase58() === creatorAddress
+  const isOpponent =
+    wallet.publicKey?.toBase58() === competitorAddress ||
+    (wallet.publicKey?.toBase58() && competitorAddress === '')
+  const isJudge = wallet.publicKey?.toBase58() === judgeAddress
 
   const handleAccept = async () => {
-    setIsAccepting(true)
+    setIsAcceptingBet(true)
     setError(null)
+
     try {
+      await acceptWager.mutateAsync({
+        wagerId: new BN(chainId),
+        wagerInitiator: new PublicKey(creatorAddress),
+        opponent: wallet.publicKey!,
+        wagerAmount: amount,
+        odds1: ods1,
+        odds2: ods2,
+      })
+
       await pb.collection('bets').update(id, { accepted_opponent: true })
-      onClose() // Close the modal after successful update
+
+      setSnackbar({
+        open: true,
+        message: 'Bet accepted successfully!',
+        type: 'success',
+      })
+
+      setTimeout(() => {
+        onClose()
+      }, 1950)
     } catch (error) {
       console.error('Error accepting bet:', error)
       setError('Failed to accept bet. Please try again.')
+      setSnackbar({
+        open: true,
+        message: 'Error accepting bet. Please try again.',
+        type: 'error',
+      })
     } finally {
-      setIsAccepting(false)
+      setIsAcceptingBet(false)
     }
   }
 
   const handleJudgeAccept = async () => {
-    setIsAccepting(true)
+    setIsAcceptingJudging(true)
     setError(null)
     try {
+      await acceptJudging.mutateAsync({
+        wagerId: new BN(chainId),
+        wagerInitiator: new PublicKey(creatorAddress),
+        judge: wallet.publicKey!,
+      })
+
       await pb.collection('bets').update(id, { accepted_judge: true })
-      onClose() // Close the modal after successful update
+
+      setSnackbar({
+        open: true,
+        message: 'Judging accepted successfully!',
+        type: 'success',
+      })
+
+      setTimeout(() => {
+        onClose()
+      }, 1950)
     } catch (error) {
       console.error('Error accepting judging:', error)
       setError('Failed to accept judging. Please try again.')
+      setSnackbar({
+        open: true,
+        message: 'Error accepting judging. Please try again.',
+        type: 'error',
+      })
     } finally {
-      setIsAccepting(false)
+      setIsAcceptingJudging(false)
+    }
+  }
+
+  const handleDelete = async () => {
+    setIsDeleting(true)
+    setError(null)
+    try {
+      await pb.collection('bets').delete(id)
+      setSnackbar({
+        open: true,
+        message: 'Bet deleted successfully!',
+        type: 'success',
+      })
+      setTimeout(() => {
+        onClose()
+      }, 1950)
+    } catch (error) {
+      console.error('Error deleting bet:', error)
+      setError('Failed to delete bet. Please try again.')
+      setSnackbar({
+        open: true,
+        message: 'Error deleting bet. Please try again.',
+        type: 'error',
+      })
+    } finally {
+      setIsDeleting(false)
     }
   }
 
@@ -109,7 +206,6 @@ const BetDetails: React.FC<BetDetailsProps> = ({
             <span className='text-gray-400 font-light'>Odds</span>
             <span>{ods1 + ':' + ods2}</span>
           </div>
-
           <div className='flex justify-between'>
             <span className='text-gray-400 font-light'>Judge</span>
             <span>{judge}</span>
@@ -144,10 +240,10 @@ const BetDetails: React.FC<BetDetailsProps> = ({
             </button>
             <button
               onClick={handleAccept}
-              disabled={isAccepting}
+              disabled={isAcceptingBet}
               className='bg-green-600/30  transition-all duration-300 hover:bg-green-700 text-green-300 rounded-lg w-full h-fit py-3 disabled:opacity-50'
             >
-              {isAccepting ? 'Accepting...' : 'Accept Bet'}
+              {isAcceptingBet ? 'Accepting...' : 'Accept Bet'}
             </button>
           </div>
         )}
@@ -162,12 +258,22 @@ const BetDetails: React.FC<BetDetailsProps> = ({
             </button>
             <button
               onClick={handleJudgeAccept}
-              disabled={isAccepting}
+              disabled={isAcceptingJudging}
               className='bg-green-600/30  transition-all duration-300 hover:bg-green-700 text-green-300 rounded-lg w-full h-fit py-3 disabled:opacity-50'
             >
-              {isAccepting ? 'Accepting...' : 'Accept Judging'}
+              {isAcceptingJudging ? 'Accepting...' : 'Accept Judging'}
             </button>
           </div>
+        )}
+
+        {isCreator && !isAcceptingJudging && (
+          <button
+            onClick={handleDelete}
+            disabled={isDeleting}
+            className='mt-6 bg-red-600/30 transition-all duration-300 hover:bg-red-700 text-red-300 rounded-lg w-full h-fit py-3 disabled:opacity-50'
+          >
+            {isDeleting ? 'Deleting...' : 'Delete Bet'}
+          </button>
         )}
 
         {isJudgment && (
@@ -181,6 +287,21 @@ const BetDetails: React.FC<BetDetailsProps> = ({
             >
               Pick winner
             </button>
+          </div>
+        )}
+
+        {snackbar.open && (
+          <div
+            className={`fixed bottom-4 right-4 px-4 py-2 rounded-md shadow-lg flex items-center space-x-2 ${
+              snackbar.type === 'success' ? 'bg-green-500' : 'bg-red-500'
+            }`}
+          >
+            {snackbar.type === 'success' ? (
+              <CheckCircle className='text-white' size={20} />
+            ) : (
+              <XCircle className='text-white' size={20} />
+            )}
+            <p className='text-white'>{snackbar.message}</p>
           </div>
         )}
       </div>

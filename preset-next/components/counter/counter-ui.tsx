@@ -9,6 +9,7 @@ import {
   useCounterProgramAccount,
 } from './counter-data-access'
 
+/*
 export function CounterCreate() {
   const { initialize } = useCounterProgram()
 
@@ -153,3 +154,5 @@ function CounterCard({ account }: { account: PublicKey }) {
     </div>
   )
 }
+
+*/

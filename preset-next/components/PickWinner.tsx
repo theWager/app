@@ -1,5 +1,9 @@
 import { Bet } from '@/util/Types'
 import React from 'react'
+import { useCounterProgram } from './counter/counter-data-access'
+import { PublicKey } from '@solana/web3.js';
+import { BN } from '@coral-xyz/anchor';
+
 type BetDetailsProps = Bet & {
   isOpen: boolean
   onClose: () => void
@@ -10,6 +14,17 @@ const PickWinner: React.FC<BetDetailsProps> = props => {
   const [isCreatorWinner, setIsCreatorWinner] = React.useState<boolean | null>(
     null,
   )
+
+  const { declareWinner } = useCounterProgram()
+
+  const pickWinnerOnChain = async () => {
+    await declareWinner.mutateAsync({
+      wagerId: new BN(props.chainId),
+      wagerInitiator: new PublicKey(props.creatorAddress),
+      winner: new PublicKey(isCreatorWinner ? props.creatorAddress : props.competitorAddress),
+      judge: new PublicKey(props.judgeAddress),
+    })
+  }
 
   const changeWinner = (isCreator: boolean) => {
     if ((isCreatorWinner && isCreator) || (!isCreatorWinner && !isCreator))
@@ -68,7 +83,7 @@ const PickWinner: React.FC<BetDetailsProps> = props => {
           <button className='bg-wagerBlue/10  transition-all duration-300 hover:bg-wagerBlue/20 text-gray rounded-lg w-full h-fit py-3'>
             Cancel
           </button>
-          <button className='bg-wagerLilac  transition-all duration-300 hover:bg-wagerLilac/70 text-white rounded-lg w-full font-bold h-fit py-3'>
+          <button onClick={pickWinnerOnChain} className='bg-wagerLilac  transition-all duration-300 hover:bg-wagerLilac/70 text-white rounded-lg w-full font-bold h-fit py-3'>
             Accept
           </button>
         </div>
