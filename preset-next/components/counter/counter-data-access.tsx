@@ -154,10 +154,12 @@ export function useCounterProgram() {
 
       // Send some lamports to the opponent account from the wallet
       const transferInstruction =  web3.SystemProgram.transfer({
-        fromPubkey: wagerInitiator,
+        fromPubkey: opponent,
         toPubkey: wagerPda,
         lamports: wagerAmount * odds2 * LAMPORTS_PER_SOL / odds1,
       });
+
+      console.log(opponent.toBase58())
 
       return program.methods
         .acceptWager()
