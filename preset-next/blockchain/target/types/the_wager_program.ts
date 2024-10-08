@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/the_wager_program.json`.
  */
 export type TheWagerProgram = {
-  "address": "9yd2CBpcNGivHZ9tBD3wYVejRaHjf3P4aJxhQ3Sxh9jh",
+  "address": "YhH2w4tJgpyGvv7gADLtsqoRezNWhpb7zLzudWAr775",
   "metadata": {
     "name": "theWagerProgram",
     "version": "0.1.0",

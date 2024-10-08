@@ -21,7 +21,7 @@ export function getWagerProgramId(cluster: Cluster) {
     case 'devnet':
     case 'testnet':
       // This is the program ID for the Counter program on devnet and testnet.
-      return new PublicKey('9yd2CBpcNGivHZ9tBD3wYVejRaHjf3P4aJxhQ3Sxh9jh');
+      return new PublicKey('YhH2w4tJgpyGvv7gADLtsqoRezNWhpb7zLzudWAr775');
     case 'mainnet-beta':
     default:
       return WAGER_PROGRAM_ID;
