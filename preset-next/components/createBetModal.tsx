@@ -162,7 +162,7 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
       let wagerIdBN
       try {
         const records = await pb.collection('bets').getFullList()
-        wagerId = records.length + 20000
+        wagerId = records.length + 12345
         wagerIdBN = new BN(wagerId)
       } catch (error) {
         wagerId = Math.random()*10000
@@ -215,7 +215,7 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
         onClose()
       }, 3000)
     } catch (error) {
-      console.error('Error creating wager:', error)
+      console.error('Error creating wager:', error?.data)
       setSnackbar({
         open: true,
         message: 'Error creating wager. Please try again.',
