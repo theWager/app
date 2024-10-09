@@ -1,7 +1,7 @@
 'use client'
 import { DashboardLayout } from '@/layouts/DashboardLayout'
 import AllBetsHeader from '@/sections/AllBets'
-import CategoryGridCarousel from '@/sections/PublicWagers'
+// import CategoryGridCarousel from '@/sections/PublicWagers'
 import { BetPages } from '@/util/Enums'
 import { BetsMapper } from '@/util/ORM'
 import { PocketBaseBet, PocketBaseUser } from '@/util/PocketbaseTypes'
@@ -49,7 +49,7 @@ export default function AllBets() {
   return (
     <DashboardLayout>
       <div className='p-4 flex flex-col gap-y-4 bg-darknavy'>
-        <CategoryGridCarousel />
+        {/* <CategoryGridCarousel /> */ }
         <AllBetsHeader
           isLoggedIn
           title='All Wagers'
