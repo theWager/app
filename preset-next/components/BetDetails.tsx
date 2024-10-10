@@ -99,10 +99,10 @@ const BetDetails: React.FC<BetDetailsProps> = ({
       }, 1950)
     } catch (error) {
       console.error('Error accepting bet:', error)
-      setError('Failed to accept bet. Please try again.')
+      setError('Failed to accept wager. Please try again.')
       setSnackbar({
         open: true,
-        message: 'Error accepting bet. Please try again.',
+        message: 'Error accepting wager. Please try again.',
         type: 'error',
       })
     } finally {
@@ -243,7 +243,7 @@ const BetDetails: React.FC<BetDetailsProps> = ({
               disabled={isAcceptingBet}
               className='bg-green-600/30  transition-all duration-300 hover:bg-green-700 text-green-300 rounded-lg w-full h-fit py-3 disabled:opacity-50'
             >
-              {isAcceptingBet ? 'Accepting...' : 'Accept Bet'}
+              {isAcceptingBet ? 'Accepting...' : 'Accept Wager'}
             </button>
           </div>
         )}
