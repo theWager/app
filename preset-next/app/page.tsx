@@ -17,13 +17,15 @@ export default function AllBets() {
 
   const fetchBets = async () => {
     try {
-
+      const oneDayAgo = new Date(new Date().getTime() - 24 * 60 * 60 * 1000);
       const storedBets = await pb
         .collection('bets')
         .getFullList<PocketBaseBet>({
-          filter: `expire_date > '${new Date().toISOString()}'`,
+          filter: `expire_date > '${oneDayAgo.toISOString()}'`,
           sort: '-created',
         })
+
+      console.log(storedBets)
 
 
       const storedUsers = await pb
