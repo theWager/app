@@ -74,13 +74,13 @@ function MyBetsContent() {
   return (
     <div className='p-4 flex flex-col gap-y-4 bg-darknavy'>
       {isLoading ? (
-        <p className="text-white">Loading your bets...</p>
+        <p className="text-white">Loading your wagers...</p>
       ) : error ? (
         <p className="text-red-500">{error}</p>
       ) : (
         <AllBetsHeader
           isLoggedIn={!!wallet.publicKey}
-          title='My Bets'
+          title='My Wagers'
           bets={myBets}
           page={BetPages.MY_BETS}
         />
