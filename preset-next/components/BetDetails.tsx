@@ -54,6 +54,8 @@ const BetDetails: React.FC<BetDetailsProps> = ({
     type: 'success' as 'success' | 'error',
   })
 
+  console.log(createdDate)
+
   useEffect(() => {
     if (snackbar.open) {
       const timer = setTimeout(() => {
@@ -216,12 +218,12 @@ const BetDetails: React.FC<BetDetailsProps> = ({
           </div>
           <div className='flex justify-between'>
             <span className='text-gray-400 font-light'>Created Date</span>
-            <span>{createdDate.toLocaleDateString()}</span>
-          </div>
+            <span>{`${createdDate.toLocaleDateString()} ${createdDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}</span>
+            </div>
           <div className='flex justify-between'>
             <span className='text-gray-400 font-light'>Expiry Date</span>
-            <span>{expirationDate.toLocaleDateString()}</span>
-          </div>
+            <span>{`${expirationDate.toLocaleDateString()} ${expirationDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}</span>
+            </div>
           <div className='flex justify-between'>
             <span className='text-gray-400 font-light'>Status</span>
             <span>{acceptedCompetitor ? 'Accepted' : 'Pending'}</span>
@@ -248,7 +250,7 @@ const BetDetails: React.FC<BetDetailsProps> = ({
           </div>
         )}
 
-        {isJudge && !isJudgment && !acceptedJudge && (
+        {isJudge && isJudgment && !acceptedJudge && (
           <div className='flex justify-between mt-6 space-x-5'>
             <button
               onClick={handleDecline}
@@ -276,13 +278,13 @@ const BetDetails: React.FC<BetDetailsProps> = ({
           </button>
         )}
 
-        {isJudgment && (
+        {isJudgment && acceptedJudge && acceptedCompetitor && (
           <div className='flex justify-between mt-6 space-x-5'>
             <button className='bg-wagerBlue/10  transition-all duration-300 hover:bg-wagerBlue/20 text-gray rounded-lg w-full h-fit py-3'>
               Cancel Bet
             </button>
             <button
-              className='bg-wagerLilac  transition-all duration-300 hover:wagerLilac/80 text-white rounded-lg w-full font-bold h-fit py-3'
+              className='bg-wagerLilac transition-all duration-300 hover:wagerLilac/80 text-white rounded-lg w-full font-bold h-fit py-3'
               onClick={openWinnerModal}
             >
               Pick winner

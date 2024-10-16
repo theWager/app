@@ -61,13 +61,13 @@ const BetDetailsModal: React.FC<BetDetailsModalProps> = ({
             <div className='flex-1'>
               <p className='text-sm font-medium text-teal-400'>Created:</p>
               <p className='text-white'>
-                {bet.createdDate.toLocaleDateString()}
+              <span>{`${bet.createdDate.toLocaleDateString()} ${bet.createdDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}</span>
               </p>
             </div>
             <div className='flex-1'>
               <p className='text-sm font-medium text-teal-400'>Expires:</p>
               <p className='text-white'>
-                {bet.expirationDate.toLocaleDateString()}
+              <span>{`${bet.expirationDate.toLocaleDateString()} ${bet.expirationDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}</span>
               </p>
             </div>
           </div>

@@ -57,17 +57,6 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
 
   useEffect(() => {
 
-    const fetchSolanaPrice = async () => {
-      try {
-        const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd');
-        const data = await response.json()
-        setSolanaPrice(data.solana.usd);
-  
-      } catch (err) {
-        console.error('Error fetching Solana price: ', err)
-      }
-    }
-
     const fetchUsers = async () => {
       try {
         const records = await pb.collection('users').getFullList<User>()
@@ -82,7 +71,6 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
       }
     }
 
-    fetchSolanaPrice()
     fetchUsers()
   }, [])
 
@@ -146,6 +134,17 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
     setIsCreatingWager(true)
     e.preventDefault()
     try {
+
+      if (formData.opponent === wallet.publicKey?.toBase58()) {
+        setSnackbar({
+          open: true,
+          message: "You can't wager yourself!",
+          type: 'error',
+        })
+        setIsCreatingWager(false)
+        return
+      }
+
       if (showUsernameField && username) {
         await pb.collection('users').create({
           name: username,
