@@ -161,7 +161,7 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
       let wagerIdBN
       try {
         const records = await pb.collection('bets').getFullList()
-        wagerId = records.length + 34570
+        wagerId = 123456 + records.length
         wagerIdBN = new BN(wagerId)
       } catch (error) {
         wagerId = Math.random()*10000
