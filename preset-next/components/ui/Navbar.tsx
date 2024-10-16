@@ -71,7 +71,7 @@ const Navbar: React.FC<NavbarProps> = ({ isHome = false }) => {
               </span>
             </span>
             <span className={'ml-6 text-white text-xl ' + dg16.className}>
-              Bets:
+              Wagers:
               <span
                 className={'ml-6 text-wagerGreen text-xl ' + dg16.className}
               >

@@ -18,6 +18,9 @@ const PickWinner: React.FC<BetDetailsProps> = props => {
   const { declareWinner } = useCounterProgram()
 
   const pickWinnerOnChain = async () => {
+
+    // TODO: If wager end date has not passed, do not allow to pick winner
+
     await declareWinner.mutateAsync({
       wagerId: new BN(props.chainId),
       wagerInitiator: new PublicKey(props.creatorAddress),
