@@ -320,10 +320,15 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
                 className='w-full bg-gray-800 rounded px-3 py-2 text-white appearance-none focus:outline-none focus:ring-2 focus:ring-teal-500'
               >
                 <option value=''>Pick a Category</option>
+                <option value="Friend Wager">Friend Wager</option>
+                <option value="Pop culture">Pop culture</option>
                 <option value='Sports'>Sports</option>
                 <option value='Politics'>Politics</option>
-                <option value='entertainment'>Entertainment</option>
-                {/* Add more categories as needed */}
+                <option value='Entertainment'>Entertainment</option>
+                <option value='Business'>Business</option>
+                <option value='Science'>Science</option>
+                <option value='Stream'>Stream</option>
+                <option value='Games'>Games</option>
               </select>
               <ChevronDown
                 size={20}

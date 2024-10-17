@@ -69,9 +69,9 @@ const BetDetails: React.FC<BetDetailsProps> = ({
   if (!isOpen) return null
 
   const isCreator = wallet.publicKey?.toBase58() === creatorAddress
-  const isOpponent =
-    wallet.publicKey?.toBase58() === competitorAddress ||
-    (wallet.publicKey?.toBase58() && competitorAddress === '')
+  const isOpponent = wallet.publicKey?.toBase58() === competitorAddress 
+    
+  const isOpenBet = wallet.publicKey?.toBase58() && competitorAddress === ''
   const isJudge = wallet.publicKey?.toBase58() === judgeAddress
 
   const handleAccept = async () => {
@@ -254,6 +254,18 @@ const BetDetails: React.FC<BetDetailsProps> = ({
               {isAcceptingBet ? 'Accepting...' : 'Accept Wager'}
             </button>
           </div>
+        )}
+
+        {isOpenBet && (
+          <div className='flex justify-between mt-6 space-x-5'>
+          <button
+            onClick={handleAccept}
+            disabled={isAcceptingBet}
+            className='bg-green-600/30  transition-all duration-300 hover:bg-green-700 text-green-300 rounded-lg w-full h-fit py-3 disabled:opacity-50'
+          >
+            {isAcceptingBet ? 'Accepting...' : 'Accept Wager'}
+          </button>
+        </div>
         )}
 
         {isJudge && isJudgment && !acceptedJudge && (
