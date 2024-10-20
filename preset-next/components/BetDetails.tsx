@@ -29,6 +29,7 @@ const BetDetails: React.FC<BetDetailsProps> = ({
   ods1,
   ods2,
   amount,
+  endDate,
   judge,
   chainId,
   competitor,
@@ -54,7 +55,6 @@ const BetDetails: React.FC<BetDetailsProps> = ({
     type: 'success' as 'success' | 'error',
   })
 
-  console.log(createdDate)
 
   useEffect(() => {
     if (snackbar.open) {
@@ -286,7 +286,7 @@ const BetDetails: React.FC<BetDetailsProps> = ({
           </div>
         )}
 
-        {isJudgment && acceptedJudge && acceptedCompetitor && (
+        {isJudgment && acceptedJudge && acceptedCompetitor && new Date() >= endDate && (
           <div className='flex justify-between mt-6 space-x-5'>
             <button className='bg-wagerBlue/10  transition-all duration-300 hover:bg-wagerBlue/20 text-gray rounded-lg w-full h-fit py-3'>
               Cancel Bet

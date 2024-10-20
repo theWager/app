@@ -21,6 +21,7 @@ export const BetsMapper = (
     judge: userMap[bet.address_judge] || 'JUDGE PENDING ...',
     competitor: userMap[bet.address_opponent] || '',
     competitorAddress: bet.address_opponent,
+    endDate: new Date(bet.end_date),
     acceptedCompetitor: bet.accepted_opponent,
     judgeAddress: bet.address_judge,
     chainId: bet.wager_chain_id,
