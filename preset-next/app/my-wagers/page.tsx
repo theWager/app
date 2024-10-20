@@ -18,6 +18,7 @@ function MyBetsContent() {
   const [myBets, setMyBets] = useState<Bet[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [update, setUpdate] = useState(0)
 
   useEffect(() => {
     let isMounted = true;
@@ -69,7 +70,11 @@ function MyBetsContent() {
       isMounted = false;
       pb.cancelAllRequests();
     }
-  }, [wallet.publicKey])
+  }, [wallet.publicKey, update])
+
+  const handleUpdate = () => {
+    setUpdate(prev => prev + 1);
+  };
 
   return (
     <div className='p-4 flex flex-col gap-y-4 bg-darknavy'>
@@ -82,6 +87,7 @@ function MyBetsContent() {
           isLoggedIn={!!wallet.publicKey}
           title='My Wagers'
           bets={myBets}
+          update={handleUpdate}
           page={BetPages.MY_BETS}
         />
       )}
