@@ -15,12 +15,14 @@ interface AllBetsHeaderProps {
   isLoggedIn: boolean
   page: BetPages
   title: string
+  update: Function
   bets: Bet[]
 }
 
 const AllBetsHeader: React.FC<AllBetsHeaderProps> = ({
   isLoggedIn,
   title,
+  update,
   page,
   bets,
 }) => {
@@ -34,7 +36,9 @@ const AllBetsHeader: React.FC<AllBetsHeaderProps> = ({
   isLoggedIn = wallet.publicKey?.toBase58().length ? true : false
 
   const openCreateModal = () => setIsCreateModalOpen(true)
-  const closeCreateModal = () => setIsCreateModalOpen(false)
+  const closeCreateModal = () => {setIsCreateModalOpen(false) 
+    update()
+  }
 
   const handleBetClick = (bet: Bet) => {
     setSelectedBet(bet)
@@ -44,6 +48,7 @@ const AllBetsHeader: React.FC<AllBetsHeaderProps> = ({
   const closeDetailsModal = () => {
     setIsDetailsModalOpen(false)
     setSelectedBet(null)
+    update()
   }
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {

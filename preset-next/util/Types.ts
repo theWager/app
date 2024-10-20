@@ -21,6 +21,7 @@ export type Bet = {
   acceptedCompetitor: boolean
   judgeAddress: string
   acceptedJudge: boolean
+  endDate: Date
   judge: string
   chainId: number
   ods1: number

@@ -13,6 +13,7 @@ const pb = new PocketBase('https://wager.pockethost.io')
 
 export default function AllBets() {
   const [allBets, setAllBets] = useState<Bet[]>([])
+  const [update, setUpdate] = useState(0)
 
 
   const fetchBets = async () => {
@@ -21,11 +22,10 @@ export default function AllBets() {
       const storedBets = await pb
         .collection('bets')
         .getFullList<PocketBaseBet>({
-          filter: `expire_date > '${oneDayAgo.toISOString()}'`,
+          filter: `end_date > '${oneDayAgo.toISOString()}'`,
           sort: '-created',
         })
 
-      console.log(storedBets)
 
 
       const storedUsers = await pb
@@ -44,9 +44,13 @@ export default function AllBets() {
     }
   }
 
+  const handleUpdate = () => {
+    setUpdate(prev => prev + 1);
+  };
+
   useEffect(() => {
     fetchBets()
-  }, [])
+  }, [update])
 
   return (
     <DashboardLayout>
@@ -55,6 +59,7 @@ export default function AllBets() {
         <AllBetsHeader
           isLoggedIn
           title='All Wagers'
+          update = {handleUpdate}
           bets={allBets}
           page={BetPages.ALL}
         />
