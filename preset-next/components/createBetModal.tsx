@@ -48,6 +48,10 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
   const [isCreatingWager, setIsCreatingWager] = useState(false)
   const [users, setUsers] = useState<User[]>([])
   const [userMap, setUserMap] = useState<Record<string, string>>({})
+  const [filteredOpponents, setFilteredOpponents] = useState<User[]>([])
+  const [filteredJudges, setFilteredJudges] = useState<User[]>([])
+  const [showOpponentDropdown, setShowOpponentDropdown] = useState(false)
+  const [showJudgeDropdown, setShowJudgeDropdown] = useState(false)
 
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -81,6 +85,7 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
           const result = await pb
             .collection('users')
             .getFirstListItem(`address="${wallet.publicKey.toBase58()}"`)
+          setUsername(result.name)
           setShowUsernameField(false)
         } catch (error) {
           setShowUsernameField(true)
@@ -90,6 +95,13 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
 
     checkUser()
   }, [wallet.publicKey])
+
+  const filterUsers = (input: string) => {
+    return users.filter(user => 
+      user.name.toLowerCase().includes(input.toLowerCase()) ||
+      user.address.toLowerCase().includes(input.toLowerCase())
+    )
+  }
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
@@ -104,6 +116,12 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
           opponent: '',
         }))
       }
+    } else if (type === 'radio') {
+      const description = `${username || wallet.publicKey?.toBase58()} voted ${value}`
+      setFormData(prevState => ({
+        ...prevState,
+        description: description
+      }))
     } else if (type === 'datetime-local') {
       const formattedDate = new Date(value).toISOString().slice(0, 16)
       setFormData(prevState => ({
@@ -115,6 +133,14 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
         ...prevState,
         [name]: value,
       }))
+  
+      if (name === 'opponent') {
+        setFilteredOpponents(filterUsers(value))
+        setShowOpponentDropdown(true)
+      } else if (name === 'judge') {
+        setFilteredJudges(filterUsers(value))
+        setShowJudgeDropdown(true)
+      }
     }
   }
 
@@ -220,6 +246,36 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
     setIsCreatingWager(false)
   }
 
+  const renderUserDropdown = (type: 'opponent' | 'judge', users: User[]) => {
+    return (
+      <div className="absolute z-50 w-full mt-1 bg-gray-800 rounded-md shadow-lg">
+        <ul className="py-1 max-h-60 overflow-auto">
+          {users.map(user => (
+            <li
+              key={user.address}
+              onClick={() => handleUserSelect(type, user)}
+              className="px-3 py-2 hover:bg-gray-700 cursor-pointer text-white"
+            >
+              {user.name} ({user.address.slice(0, 4)}...{user.address.slice(-4)})
+            </li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+
+  const handleUserSelect = (type: 'opponent' | 'judge', user: User) => {
+    setFormData(prevState => ({
+      ...prevState,
+      [type]: user.name,
+    }))
+    if (type === 'opponent') {
+      setShowOpponentDropdown(false)
+    } else {
+      setShowJudgeDropdown(false)
+    }
+  }
+
   useEffect(() => {
     if (snackbar.open) {
       const timer = setTimeout(() => {
@@ -287,22 +343,51 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
           </div>
 
           <div>
-            <label
-              htmlFor='description'
-              className='block text-sm font-medium text-teal-400 mb-1'
-            >
-              Description
-            </label>
-            <textarea
-              id='description'
-              name='description'
-              value={formData.description}
-              onChange={handleInputChange}
-              rows={3}
-              placeholder='Here you describe what side of the wager you are on. e.g. I think Trump will lose the election!'
-              className='w-full bg-gray-800 rounded px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500'
-            ></textarea>
-          </div>
+  <label className='block text-sm font-medium text-teal-400 mb-3'>
+    Your Vote
+  </label>
+  <div className='flex space-x-6'>
+    <div className='flex items-center'>
+      <input
+        type='radio'
+        id='vote-yes'
+        name='vote'
+        value='yes'
+        checked={formData.description.includes('voted yes')}
+        onChange={handleInputChange}
+        className='form-radio h-5 w-5 text-teal-400 bg-gray-800 border-gray-600 focus:ring-2 focus:ring-teal-400 focus:ring-opacity-50 cursor-pointer'
+      />
+      <label
+        htmlFor='vote-yes'
+        className='ml-2 text-sm font-medium text-white cursor-pointer'
+      >
+        Yes
+      </label>
+    </div>
+    <div className='flex items-center'>
+      <input
+        type='radio'
+        id='vote-no'
+        name='vote'
+        value='no'
+        checked={formData.description.includes('voted no')}
+        onChange={handleInputChange}
+        className='form-radio h-5 w-5 text-teal-400 bg-gray-800 border-gray-600 focus:ring-2 focus:ring-teal-400 focus:ring-opacity-50 cursor-pointer'
+      />
+      <label
+        htmlFor='vote-no'
+        className='ml-2 text-sm font-medium text-white cursor-pointer'
+      >
+        No
+      </label>
+    </div>
+  </div>
+  {formData.description && (
+    <p className='mt-2 text-sm text-gray-400'>
+      {formData.description}
+    </p>
+  )}
+</div>
 
           <div>
             <label
@@ -411,56 +496,65 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
           </div>
 
           {!isOpenToAnyone && (
-            <div>
-              <label
-                htmlFor='opponent'
-                className='block text-sm font-medium text-teal-400 mb-1'
-              >
-                Opponent (username or address)
-              </label>
-              <input
-                list="opponentList"
-                id='opponent'
-                name='opponent'
-                value={formData.opponent}
-                onChange={handleInputChange}
-                placeholder='Enter username or address'
-                className='w-full bg-gray-800 rounded px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500'
-              />
-              <datalist id="opponentList">
-                {users.map(user => (
-                  <option key={user.address} value={user.name}>
-                    {user.address}
-                  </option>
-                ))}
-              </datalist>
-            </div>
-          )}
+    <div className="relative">
+      <label
+        htmlFor='opponent'
+        className='block text-sm font-medium text-teal-400 mb-1'
+      >
+        Opponent
+      </label>
+      <div className="relative">
+        <input
+          type="text"
+          id='opponent'
+          name='opponent'
+          value={formData.opponent}
+          onChange={handleInputChange}
+          onFocus={() => setShowOpponentDropdown(true)}
+          onBlur={() => setTimeout(() => setShowOpponentDropdown(false), 200)}
+          placeholder='Enter username or address'
+          className='w-full bg-gray-800 rounded px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500'
+        />
+        <ChevronDown 
+          size={20}
+          className='absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none'
+        />
+      </div>
+      {showOpponentDropdown && filteredOpponents.length > 0 && (
+        renderUserDropdown('opponent', filteredOpponents)
+      )}
+    </div>
+  )}
 
-          <div>
-            <label
-              htmlFor='judge'
-              className='block text-sm font-medium text-teal-400 mb-1'
-            >
-              Judge (username or address)
-            </label>
-            <input
-              list="judgeList"
-              id='judge'
-              name='judge'
-              value={formData.judge}
-              onChange={handleInputChange}
-              placeholder='Enter username or address'
-              className='w-full bg-gray-800 rounded px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500'
-            />
-            <datalist id="judgeList">
-              {users.map(user => (
-                <option key={user.address} value={user.name}>
-                  {user.address}
-                </option>
-              ))}
-            </datalist>
-          </div>
+  <div className="relative">
+    <label
+      htmlFor='judge'
+      className='block text-sm font-medium text-teal-400 mb-1'
+    >
+      Judge
+    </label>
+    <div className="relative">
+      <input
+        type="text"
+        id='judge'
+        name='judge'
+        value={formData.judge}
+        onChange={handleInputChange}
+        onFocus={() => setShowJudgeDropdown(true)}
+        onBlur={() => setTimeout(() => setShowJudgeDropdown(false), 200)}
+        placeholder='Enter username or address'
+        className='w-full bg-gray-800 rounded px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500'
+      />
+      <ChevronDown 
+        size={20}
+        className='absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none'
+      />
+    </div>
+    {showJudgeDropdown && filteredJudges.length > 0 && (
+      renderUserDropdown('judge', filteredJudges)
+    )}
+  </div>
+
 
           <div>
             <label
@@ -504,12 +598,12 @@ const CreateBetModal: React.FC<CreateBetModalProps> = ({ isOpen, onClose }) => {
               Cancel
             </button>
             <button
-              type='submit'
-              disabled={isCreatingWager}
-              className='flex-1 px-4 py-2 bg-purple-600 text-white rounded  transition-all duration-300 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500'
-            >
-              {isCreatingWager ? 'Creating Wager...' : 'Create Wager'}
-              </button>
+  type='submit'
+  disabled={isCreatingWager || !formData.description}
+  className='flex-1 px-4 py-2 bg-purple-600 text-white rounded transition-all duration-300 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50'
+>
+  {isCreatingWager ? 'Creating Wager...' : 'Create Wager'}
+</button>
           </div>
         </form>
 
